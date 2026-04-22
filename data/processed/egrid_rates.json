@@ -1,109 +1,136 @@
 {
   "AKGD": {
+    "name": "ASCC Alaska Grid",
     "co2_rate": 899.6,
     "net_gen": 5096872.779
   },
   "AKMS": {
+    "name": "ASCC Miscellaneous",
     "co2_rate": 520.5,
     "net_gen": 1582032.382
   },
   "AZNM": {
+    "name": "WECC Southwest",
     "co2_rate": 703.7,
     "net_gen": 175554659.519
   },
   "CAMX": {
+    "name": "WECC California",
     "co2_rate": 428.5,
     "net_gen": 220986983.331
   },
   "ERCT": {
+    "name": "ERCOT All",
     "co2_rate": 733.9,
     "net_gen": 477137386.101
   },
   "FRCC": {
+    "name": "FRCC All",
     "co2_rate": 782.3,
     "net_gen": 250055523.983
   },
   "HIMS": {
+    "name": "HICC Miscellaneous",
     "co2_rate": 1123.4,
     "net_gen": 2611612.997
   },
   "HIOA": {
+    "name": "HICC Oahu",
     "co2_rate": 1489.5,
     "net_gen": 6547004.736
   },
   "MROE": {
+    "name": "MRO East",
     "co2_rate": 1397.3,
     "net_gen": 24520967.706
   },
   "MROW": {
+    "name": "MRO West",
     "co2_rate": 920.1,
     "net_gen": 240934538.663
   },
   "NEWE": {
+    "name": "NPCC New England",
     "co2_rate": 539.3,
     "net_gen": 102716862.75
   },
   "NWPP": {
+    "name": "WECC Northwest",
     "co2_rate": 631.7,
     "net_gen": 269253053.412
   },
   "NYCW": {
+    "name": "NPCC NYC/Westchester",
     "co2_rate": 864.5,
     "net_gen": 34602268.097
   },
   "NYLI": {
+    "name": "NPCC Long Island",
     "co2_rate": 1180.7,
     "net_gen": 9823461.808
   },
   "NYUP": {
+    "name": "NPCC Upstate NY",
     "co2_rate": 242.1,
     "net_gen": 85283183.254
   },
   "PRMS": {
+    "name": "Puerto Rico Miscellaneous",
     "co2_rate": 1543.1,
     "net_gen": 17501153.122
   },
   "RFCE": {
+    "name": "RFC East",
     "co2_rate": 596.9,
     "net_gen": 284874108.51
   },
   "RFCM": {
+    "name": "RFC Michigan",
     "co2_rate": 970.6,
     "net_gen": 91629481.603
   },
   "RFCW": {
+    "name": "RFC West",
     "co2_rate": 911.4,
     "net_gen": 524352082.167
   },
   "RMPA": {
+    "name": "WECC Rockies",
     "co2_rate": 1036.6,
     "net_gen": 67674810.481
   },
   "SPNO": {
+    "name": "SPP North",
     "co2_rate": 862.0,
     "net_gen": 73458953.049
   },
   "SPSO": {
+    "name": "SPP South",
     "co2_rate": 872.0,
     "net_gen": 158074959.653
   },
   "SRMV": {
+    "name": "SERC Mississippi Valley",
     "co2_rate": 739.7,
     "net_gen": 176359169.826
   },
   "SRMW": {
+    "name": "SERC Midwest",
     "co2_rate": 1239.8,
     "net_gen": 105391939.282
   },
   "SRSO": {
+    "name": "SERC South",
     "co2_rate": 842.3,
     "net_gen": 256144699.488
   },
   "SRTV": {
+    "name": "SERC Tennessee Valley",
     "co2_rate": 898.1,
     "net_gen": 209324307.73
   },
   "SRVC": {
+    "name": "SERC Virginia/Carolina",
     "co2_rate": 593.4,
     "net_gen": 319478860.928
   }

@@ -77,6 +77,7 @@ def build_egrid_rates():
             netgen[code.strip()] = float(ng)
     wb.close()
 
+    name_col = "eGRID subregion name"
     rates = {}
     for _, r in rates_df.iterrows():
         code = str(r[acronym_col]).strip()
@@ -86,8 +87,9 @@ def build_egrid_rates():
         if pd.isna(co2):
             continue
         rates[code] = {
+            "name":     str(r[name_col]).strip() if name_col in rates_df.columns else code,
             "co2_rate": float(co2),
-            "net_gen": netgen.get(code),
+            "net_gen":  netgen.get(code),
         }
 
     out = OUT / "egrid_rates.json"
@@ -231,15 +233,35 @@ def build_tri():
             "city":   str(r[col_city]).strip(),
         })
 
+    # Spatial join: assign eGRID subregion to each facility
+    shp = RAW / "egrid2023_subregions" / "eGRID2023_Subregions.shp"
+    gdf_sub = gpd.read_file(shp)[["Subregion", "geometry"]]
+    gdf_fac = gpd.GeoDataFrame(
+        {"idx": range(len(facilities))},
+        geometry=gpd.points_from_xy(
+            [f["lon"] for f in facilities],
+            [f["lat"] for f in facilities],
+        ),
+        crs="EPSG:4326",
+    )
+    joined = gpd.sjoin(gdf_fac, gdf_sub, how="left", predicate="within")
+    joined = joined.drop_duplicates("idx")
+    subr_by_idx = dict(zip(joined["idx"], joined["Subregion"]))
+    for i, f in enumerate(facilities):
+        subr = subr_by_idx.get(i)
+        f["egrid_subregion"] = subr if isinstance(subr, str) else None
+
     out = OUT / "tri_facilities.json"
     out.write_text(json.dumps(facilities, indent=2))
 
     by_sector = {}
     for f in facilities:
         by_sector[f["sector"]] = by_sector.get(f["sector"], 0) + 1
+    no_subr = sum(1 for f in facilities if not f["egrid_subregion"])
     print(f"[1d] TRI facilities: {len(facilities)} unique → {out}")
     for sector, count in sorted(by_sector.items()):
         print(f"     {sector}: {count}")
+    print(f"     ({no_subr} facilities outside all subregion boundaries)")
     return facilities
 
 
