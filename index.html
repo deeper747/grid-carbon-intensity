@@ -419,6 +419,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   // receive mouse events first, regardless of choropleth bringToFront calls.
   map.createPane("facilitiesPane");
   map.getPane("facilitiesPane").style.zIndex = 450;
+  map.getPane("facilitiesPane").style.pointerEvents = "none";
   const facilityRenderer = L.canvas({ pane: "facilitiesPane" });
 
   // ── Subregion detail panel logic ──────────────────────────────────────────
