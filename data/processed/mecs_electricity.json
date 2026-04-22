@@ -1,0 +1,410 @@
+[
+  {
+    "naics": "325120",
+    "sector_label": "Industrial Gases",
+    "census_region": "Northeast",
+    "elec_mkwh": 9773.0
+  },
+  {
+    "naics": "325311",
+    "sector_label": "Nitrogenous Fertilizers",
+    "census_region": "Northeast",
+    "elec_mkwh": 6.0
+  },
+  {
+    "naics": "325312",
+    "sector_label": "Phosphatic Fertilizers",
+    "census_region": "Northeast",
+    "elec_mkwh": 3.0
+  },
+  {
+    "naics": "327211",
+    "sector_label": "Flat Glass",
+    "census_region": "Northeast",
+    "elec_mkwh": 251.0
+  },
+  {
+    "naics": "327212",
+    "sector_label": "Other Pressed and Blown Glass and Glassware",
+    "census_region": "Northeast",
+    "elec_mkwh": 354.0
+  },
+  {
+    "naics": "327213",
+    "sector_label": "Glass Containers",
+    "census_region": "Northeast",
+    "elec_mkwh": 466.0
+  },
+  {
+    "naics": "327215",
+    "sector_label": "Glass Products from Purchased Glass",
+    "census_region": "Northeast",
+    "elec_mkwh": 258.0
+  },
+  {
+    "naics": "327310",
+    "sector_label": "Cements",
+    "census_region": "Northeast",
+    "elec_mkwh": 1014.0
+  },
+  {
+    "naics": "331110",
+    "sector_label": "Iron and Steel Mills and Ferroalloys",
+    "census_region": "Northeast",
+    "elec_mkwh": 4256.0
+  },
+  {
+    "naics": "3312",
+    "sector_label": "Steel Products from Purchased Steel",
+    "census_region": "Northeast",
+    "elec_mkwh": 867.0
+  },
+  {
+    "naics": "3313",
+    "sector_label": "Alumina and Aluminum Production and Processing",
+    "census_region": "Northeast",
+    "elec_mkwh": 2859.0
+  },
+  {
+    "naics": "331314",
+    "sector_label": "Secondary Smelting and Alloying of Aluminum",
+    "census_region": "Northeast",
+    "elec_mkwh": 16.0
+  },
+  {
+    "naics": "331315",
+    "sector_label": "Aluminum Sheet, Plate and Foils",
+    "census_region": "Northeast",
+    "elec_mkwh": 517.0
+  },
+  {
+    "naics": "331318",
+    "sector_label": "Other Aluminum Rolling, Drawing and Extruding",
+    "census_region": "Northeast",
+    "elec_mkwh": 242.0
+  },
+  {
+    "naics": "3314",
+    "sector_label": "Nonferrous Metal (except Aluminum) Production and Processing",
+    "census_region": "Northeast",
+    "elec_mkwh": 1617.0
+  },
+  {
+    "naics": "331410",
+    "sector_label": "Nonferrous Metal (except Aluminum) Smelting and Refining",
+    "census_region": "Northeast",
+    "elec_mkwh": 302.0
+  },
+  {
+    "naics": "334413",
+    "sector_label": "Semiconductors and Related Devices",
+    "census_region": "Northeast",
+    "elec_mkwh": 2319.0
+  },
+  {
+    "naics": "325120",
+    "sector_label": "Industrial Gases",
+    "census_region": "Midwest",
+    "elec_mkwh": 6755.0
+  },
+  {
+    "naics": "325311",
+    "sector_label": "Nitrogenous Fertilizers",
+    "census_region": "Midwest",
+    "elec_mkwh": 2158.0
+  },
+  {
+    "naics": "325312",
+    "sector_label": "Phosphatic Fertilizers",
+    "census_region": "Midwest",
+    "elec_mkwh": 1268.0
+  },
+  {
+    "naics": "327211",
+    "sector_label": "Flat Glass",
+    "census_region": "Midwest",
+    "elec_mkwh": 493.0
+  },
+  {
+    "naics": "327212",
+    "sector_label": "Other Pressed and Blown Glass and Glassware",
+    "census_region": "Midwest",
+    "elec_mkwh": 387.0
+  },
+  {
+    "naics": "327213",
+    "sector_label": "Glass Containers",
+    "census_region": "Midwest",
+    "elec_mkwh": 987.0
+  },
+  {
+    "naics": "327215",
+    "sector_label": "Glass Products from Purchased Glass",
+    "census_region": "Midwest",
+    "elec_mkwh": 1487.0
+  },
+  {
+    "naics": "327310",
+    "sector_label": "Cements",
+    "census_region": "Midwest",
+    "elec_mkwh": 3316.0
+  },
+  {
+    "naics": "331110",
+    "sector_label": "Iron and Steel Mills and Ferroalloys",
+    "census_region": "Midwest",
+    "elec_mkwh": 20638.0
+  },
+  {
+    "naics": "3312",
+    "sector_label": "Steel Products from Purchased Steel",
+    "census_region": "Midwest",
+    "elec_mkwh": 2154.0
+  },
+  {
+    "naics": "3313",
+    "sector_label": "Alumina and Aluminum Production and Processing",
+    "census_region": "Midwest",
+    "elec_mkwh": 4699.0
+  },
+  {
+    "naics": "331314",
+    "sector_label": "Secondary Smelting and Alloying of Aluminum",
+    "census_region": "Midwest",
+    "elec_mkwh": 221.0
+  },
+  {
+    "naics": "331315",
+    "sector_label": "Aluminum Sheet, Plate and Foils",
+    "census_region": "Midwest",
+    "elec_mkwh": 2384.0
+  },
+  {
+    "naics": "331318",
+    "sector_label": "Other Aluminum Rolling, Drawing and Extruding",
+    "census_region": "Midwest",
+    "elec_mkwh": 722.0
+  },
+  {
+    "naics": "3314",
+    "sector_label": "Nonferrous Metal (except Aluminum) Production and Processing",
+    "census_region": "Midwest",
+    "elec_mkwh": 1594.0
+  },
+  {
+    "naics": "331410",
+    "sector_label": "Nonferrous Metal (except Aluminum) Smelting and Refining",
+    "census_region": "Midwest",
+    "elec_mkwh": 113.0
+  },
+  {
+    "naics": "334413",
+    "sector_label": "Semiconductors and Related Devices",
+    "census_region": "Midwest",
+    "elec_mkwh": 522.0
+  },
+  {
+    "naics": "325120",
+    "sector_label": "Industrial Gases",
+    "census_region": "South",
+    "elec_mkwh": 8506.0
+  },
+  {
+    "naics": "325311",
+    "sector_label": "Nitrogenous Fertilizers",
+    "census_region": "South",
+    "elec_mkwh": 2429.0
+  },
+  {
+    "naics": "325312",
+    "sector_label": "Phosphatic Fertilizers",
+    "census_region": "South",
+    "elec_mkwh": 1272.0
+  },
+  {
+    "naics": "327211",
+    "sector_label": "Flat Glass",
+    "census_region": "South",
+    "elec_mkwh": 638.0
+  },
+  {
+    "naics": "327212",
+    "sector_label": "Other Pressed and Blown Glass and Glassware",
+    "census_region": "South",
+    "elec_mkwh": 1096.0
+  },
+  {
+    "naics": "327213",
+    "sector_label": "Glass Containers",
+    "census_region": "South",
+    "elec_mkwh": 1121.0
+  },
+  {
+    "naics": "327215",
+    "sector_label": "Glass Products from Purchased Glass",
+    "census_region": "South",
+    "elec_mkwh": 1673.0
+  },
+  {
+    "naics": "327310",
+    "sector_label": "Cements",
+    "census_region": "South",
+    "elec_mkwh": 5497.0
+  },
+  {
+    "naics": "331110",
+    "sector_label": "Iron and Steel Mills and Ferroalloys",
+    "census_region": "South",
+    "elec_mkwh": 27783.0
+  },
+  {
+    "naics": "3312",
+    "sector_label": "Steel Products from Purchased Steel",
+    "census_region": "South",
+    "elec_mkwh": 2028.0
+  },
+  {
+    "naics": "3313",
+    "sector_label": "Alumina and Aluminum Production and Processing",
+    "census_region": "South",
+    "elec_mkwh": 11337.0
+  },
+  {
+    "naics": "331314",
+    "sector_label": "Secondary Smelting and Alloying of Aluminum",
+    "census_region": "South",
+    "elec_mkwh": 281.0
+  },
+  {
+    "naics": "331315",
+    "sector_label": "Aluminum Sheet, Plate and Foils",
+    "census_region": "South",
+    "elec_mkwh": 2665.0
+  },
+  {
+    "naics": "331318",
+    "sector_label": "Other Aluminum Rolling, Drawing and Extruding",
+    "census_region": "South",
+    "elec_mkwh": 839.0
+  },
+  {
+    "naics": "3314",
+    "sector_label": "Nonferrous Metal (except Aluminum) Production and Processing",
+    "census_region": "South",
+    "elec_mkwh": 4679.0
+  },
+  {
+    "naics": "331410",
+    "sector_label": "Nonferrous Metal (except Aluminum) Smelting and Refining",
+    "census_region": "South",
+    "elec_mkwh": 2777.0
+  },
+  {
+    "naics": "334413",
+    "sector_label": "Semiconductors and Related Devices",
+    "census_region": "South",
+    "elec_mkwh": 5437.0
+  },
+  {
+    "naics": "325120",
+    "sector_label": "Industrial Gases",
+    "census_region": "West",
+    "elec_mkwh": 2964.0
+  },
+  {
+    "naics": "325311",
+    "sector_label": "Nitrogenous Fertilizers",
+    "census_region": "West",
+    "elec_mkwh": 654.0
+  },
+  {
+    "naics": "325312",
+    "sector_label": "Phosphatic Fertilizers",
+    "census_region": "West",
+    "elec_mkwh": 314.0
+  },
+  {
+    "naics": "327211",
+    "sector_label": "Flat Glass",
+    "census_region": "West",
+    "elec_mkwh": 190.0
+  },
+  {
+    "naics": "327212",
+    "sector_label": "Other Pressed and Blown Glass and Glassware",
+    "census_region": "West",
+    "elec_mkwh": 81.0
+  },
+  {
+    "naics": "327213",
+    "sector_label": "Glass Containers",
+    "census_region": "West",
+    "elec_mkwh": 876.0
+  },
+  {
+    "naics": "327215",
+    "sector_label": "Glass Products from Purchased Glass",
+    "census_region": "West",
+    "elec_mkwh": 290.0
+  },
+  {
+    "naics": "327310",
+    "sector_label": "Cements",
+    "census_region": "West",
+    "elec_mkwh": 3180.0
+  },
+  {
+    "naics": "331110",
+    "sector_label": "Iron and Steel Mills and Ferroalloys",
+    "census_region": "West",
+    "elec_mkwh": 2084.0
+  },
+  {
+    "naics": "3312",
+    "sector_label": "Steel Products from Purchased Steel",
+    "census_region": "West",
+    "elec_mkwh": 532.0
+  },
+  {
+    "naics": "3313",
+    "sector_label": "Alumina and Aluminum Production and Processing",
+    "census_region": "West",
+    "elec_mkwh": 900.0
+  },
+  {
+    "naics": "331314",
+    "sector_label": "Secondary Smelting and Alloying of Aluminum",
+    "census_region": "West",
+    "elec_mkwh": 35.0
+  },
+  {
+    "naics": "331315",
+    "sector_label": "Aluminum Sheet, Plate and Foils",
+    "census_region": "West",
+    "elec_mkwh": 599.0
+  },
+  {
+    "naics": "331318",
+    "sector_label": "Other Aluminum Rolling, Drawing and Extruding",
+    "census_region": "West",
+    "elec_mkwh": 266.0
+  },
+  {
+    "naics": "3314",
+    "sector_label": "Nonferrous Metal (except Aluminum) Production and Processing",
+    "census_region": "West",
+    "elec_mkwh": 1910.0
+  },
+  {
+    "naics": "331410",
+    "sector_label": "Nonferrous Metal (except Aluminum) Smelting and Refining",
+    "census_region": "West",
+    "elec_mkwh": 1332.0
+  },
+  {
+    "naics": "334413",
+    "sector_label": "Semiconductors and Related Devices",
+    "census_region": "West",
+    "elec_mkwh": 5353.0
+  }
+]
