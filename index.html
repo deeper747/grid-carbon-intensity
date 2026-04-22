@@ -410,10 +410,16 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   const maxRate = Math.max(...rates);
 
   // ── Leaflet map ───────────────────────────────────────────────────────────
-  const map = L.map("map", { preferCanvas: true }).setView([39, -96], 4);
+  const map = L.map("map").setView([39, -96], 4);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors", opacity: 0.4,
   }).addTo(map);
+
+  // Facility markers get their own pane above the choropleth so they always
+  // receive mouse events first, regardless of choropleth bringToFront calls.
+  map.createPane("facilitiesPane");
+  map.getPane("facilitiesPane").style.zIndex = 450;
+  const facilityRenderer = L.canvas({ pane: "facilitiesPane" });
 
   // ── Subregion detail panel logic ──────────────────────────────────────────
   let selectedLayer = null;
@@ -503,8 +509,9 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
       const code = feature.properties.Subregion;
       const d = egridRates[code] || {};
       const pct = d.co2_rate ? ((d.co2_rate - R_national) / R_national * 100).toFixed(1) : "—";
+      const label = d.name && d.name !== code ? `${d.name} (${code})` : code;
       layer.bindTooltip(
-        `<strong>${d.name || code}</strong> (${code})<br>
+        `<strong>${label}</strong><br>
          ${d.co2_rate?.toFixed(0) ?? "—"} lb CO₂/MWh &nbsp;
          ${pct > 0 ? "+" : ""}${pct}% vs avg`,
         { sticky: true }
@@ -537,8 +544,9 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
       const code = feature.properties.Subregion;
       const d = egridRates[code] || {};
       const delta = subregionDelta[code] || 0;
+      const label2 = d.name && d.name !== code ? `${d.name} (${code})` : code;
       layer.bindTooltip(
-        `<strong>${d.name || code}</strong> (${code})<br>
+        `<strong>${label2}</strong><br>
          Reduction: ${(delta / 1e6).toFixed(2)} Mt CO₂e/yr`,
         { sticky: true }
       );
@@ -566,19 +574,22 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   for (const f of triFacilities) {
     if (!sectorLayers[f.sector]) continue;
     const marker = L.circleMarker([f.lat, f.lon], {
+      renderer: facilityRenderer,
       radius: 5, fillColor: SECTOR_COLORS[f.sector],
       color: "#fff", weight: 0.8, fillOpacity: 0.85,
     });
     marker.on("click", () => {
       const subr = f.egrid_subregion || findSubregion(f.lat, f.lon);
-      const subrName = egridRates[subr]?.name || subr;
+      const subrRec = egridRates[subr];
+      const subrLabel = subrRec?.name && subrRec.name !== subr
+        ? `${subrRec.name} (${subr})` : subr;
       marker.bindPopup(`
         <div class="popup-inner">
           <div class="sector-tag">${f.sector}</div><br>
           <strong>${f.name}</strong><br>
           ${f.city}, ${f.state}<br>
           NAICS: ${f.naics}<br>
-          eGRID: <strong>${subrName}</strong> (${subr})
+          eGRID: <strong>${subrLabel}</strong>
         </div>
       `).openPopup();
     });
