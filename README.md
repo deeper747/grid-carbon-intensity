@@ -27,7 +27,7 @@ Install with: `pip install geopandas pandas openpyxl numpy`
 | `data/raw/egrid2023_rates.csv` | [EPA eGRID 2023 Summary Tables (Table 1)](https://www.epa.gov/egrid/detailed-data) | Annual CO₂ output emission rates and net generation by subregion |
 | `data/raw/eGRID2023_Data.xlsx` | [EPA eGRID 2023 Data File (Table 2)](https://www.epa.gov/egrid/detailed-data) | Net generation used to compute subregion shares |
 | `data/raw/mecs_electricity.xlsx` | [EIA MECS 2022, Table 7.6](https://www.eia.gov/consumption/manufacturing/data/2022/) | Electricity consumption by sector and Census region |
-| `data/raw/tri_facilities.csv` | EPA TRI 2023 Facility-Level Data | Facility name, location, NAICS code |
+| `data/raw/tri_facilities.csv` | [EPA TRI 2023 Facility-Level Data](https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-present) | Facility name, location, NAICS code |
 
 ---
 
@@ -131,7 +131,7 @@ Subregions are grouped under six NERC Regional Entities for reference:
 
 ### Facility locations
 
-EPA TRI 2023 facility-level data is filtered to the seven NAICS codes above and deduplicated by name and coordinates. Facilities are assigned to eGRID subregions using point-in-polygon matching. Facility counts are shown in the subregion detail table for context but are not used in emissions calculations.
+[EPA TRI 2023 facility-level data](https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-present) is filtered to the seven NAICS codes above and deduplicated by name and coordinates. Facilities are assigned to eGRID subregions using point-in-polygon matching. Facility counts are shown in the subregion detail table for context but are not used in emissions calculations.
 
 ---
 
