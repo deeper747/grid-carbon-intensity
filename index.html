@@ -251,20 +251,16 @@
     <div class="section-body">
       <div class="stat-grid">
         <div class="stat-card wide">
+          <div class="val" id="stat-reduction">—</div>
+          <div class="lbl">Scenario reduction potential (Mt CO₂e/yr) &amp; % of Scope 2</div>
+        </div>
+        <div class="stat-card wide">
           <div class="val" id="stat-natavg">—</div>
           <div class="lbl">National avg emission rate (kg CO₂/MWh)</div>
         </div>
         <div class="stat-card">
-          <div class="val" id="stat-facilities">—</div>
-          <div class="lbl">TRI facilities mapped</div>
-        </div>
-        <div class="stat-card">
           <div class="val" id="stat-scope2">—</div>
           <div class="lbl">Total Scope 2 current (Mt CO₂e/yr)</div>
-        </div>
-        <div class="stat-card wide">
-          <div class="val" id="stat-reduction">—</div>
-          <div class="lbl">Scenario reduction potential (Mt CO₂e/yr) &amp; % of Scope 2</div>
         </div>
       </div>
     </div>
@@ -351,14 +347,14 @@
     </div>
     <div class="section-body">
       <p id="footnote">
-        Scope 2 estimates from EIA MECS 2022 Table 7.6 electricity consumption by sector and Census region,
-        distributed to eGRID 2023 subregions by net generation share. Emission rates converted from lb CO₂/MWh to kg CO₂/MWh.
+        Scope 2 estimates from <a href="https://www.eia.gov/consumption/manufacturing/data/2022/" target="_blank" rel="noopener noreferrer">EIA MECS 2022</a> Table 7.6 electricity consumption by sector and Census region,
+        distributed to <a href="https://www.epa.gov/egrid/detailed-data" target="_blank" rel="noopener noreferrer">eGRID 2023</a> subregions by net generation share. Emission rates converted from lb CO₂/MWh to kg CO₂/MWh.
         <br><br>
         <strong>Full Macrogrid:</strong> all subregions equalize to the demand-weighted national average — theoretical maximum.
         <br>
-        <strong>NIETC Corridors:</strong> uses a coarse eGRID-level NIETC buildout and averages each designated corridor region with its directly connected NIETC neighbors, matching the same post-build averaging logic used in the ITCS scenario. Texas and Hawaii remain unchanged.
+        <strong>NIETC Corridors:</strong> uses a coarse eGRID-level <a href="https://www.energy.gov/oe/national-interest-electric-transmission-corridor-designation-process" target="_blank" rel="noopener noreferrer">NIETC</a> buildout and averages each designated corridor region with its directly connected NIETC neighbors, matching the same post-build averaging logic used in the ITCS scenario. Texas and Hawaii remain unchanged.
         <br>
-        <strong>NERC ITCS:</strong> uses NERC ITCS Table 7.7 as a counterfactual buildout and averages grid intensity across each directly connected interface neighborhood using an approximate TPR-to-eGRID crosswalk; Canada-linked interfaces use nearby low-carbon proxies. Hawaii remains unchanged.
+        <strong>NERC ITCS:</strong> uses the <a href="https://www.nerc.com/globalassets/initiatives/itcs/itcs_final_report.pdf" target="_blank" rel="noopener noreferrer">ITCS report</a> Table 7.7 as a counterfactual buildout and averages grid intensity across each directly connected interface neighborhood using an approximate TPR-to-eGRID crosswalk; Canada-linked interfaces use nearby low-carbon proxies. Hawaii remains unchanged.
         <br><br>
         All scenarios are static counterfactuals excluding transmission physics and induced renewables buildout.
         Facility locations from EPA TRI; solar may be undercounted due to TRI thresholds.
@@ -718,7 +714,6 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   const maxRate = Math.max(...rates);
 
   // Static stats (don't change with scenario)
-  document.getElementById("stat-facilities").textContent = triFacilities.length.toLocaleString();
   document.getElementById("stat-scope2").textContent     = (totalScope2 / 1e6).toFixed(1);
 
   // ── Leaflet map ───────────────────────────────────────────────────────────
