@@ -15,6 +15,8 @@
     --teal-light: #7dceda;
     --navy:       #0c2a30;
     --bg:         #f5f7f7;
+    --sidebar-w:  320px;
+    --header-h:   48px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; font-family: system-ui, sans-serif; background: var(--bg); color: #1a1a1a; }
@@ -22,235 +24,354 @@
   /* ── header ── */
   #header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
-    height: 48px;
+    height: var(--header-h);
     background: var(--teal-dark);
-    display: flex; align-items: center; padding: 0 16px;
+    display: flex; align-items: center; padding: 0 12px; gap: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,.3);
   }
-  #header h1 { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  #header h1 { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: .02em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  #sidebar-toggle-btn {
+    display: none;
+    align-items: center; gap: 5px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #sidebar-toggle-btn:hover { background: rgba(255,255,255,.28); }
+
+  /* ── sidebar backdrop ── */
+  #sidebar-backdrop {
+    display: none;
+    position: fixed; inset: 0; z-index: 1050;
+    background: rgba(0,0,0,.4);
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  #sidebar-backdrop.open { opacity: 1; pointer-events: all; }
 
   /* ── sidebar ── */
   #sidebar {
-    position: fixed; top: 48px; left: 0; bottom: 0; z-index: 1000;
-    width: 320px;
+    position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 1060;
+    width: var(--sidebar-w);
     background: #fff;
     border-right: 1px solid #d9e3e5;
     overflow-y: auto;
-    padding: 12px 14px 20px;
-    display: flex; flex-direction: column; gap: 14px;
+    display: flex; flex-direction: column;
+    transition: transform .3s ease;
   }
-  .stat-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+
+  /* ── scenario selector ── */
+  .scenario-section {
+    padding: 10px 14px 10px;
+    border-bottom: 2px solid #e4ecee;
+    flex-shrink: 0;
   }
-  .stat-card {
+  .scen-tabs {
+    display: flex; gap: 4px; margin: 7px 0 6px; flex-wrap: wrap;
+  }
+  .scen-tab {
+    flex: 1;
+    padding: 5px 4px;
+    font-size: 10px; font-weight: 600;
+    border: 1.5px solid #c8d8db;
+    border-radius: 4px;
     background: var(--bg);
-    border-radius: 6px;
-    padding: 8px 10px;
-    border-left: 3px solid var(--teal-mid);
+    color: #555;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .scen-tab:hover { border-color: var(--teal-mid); color: var(--teal-mid); }
+  .scen-tab.active { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+  .scen-label { font-size: 11px; font-weight: 700; color: var(--teal-dark); text-transform: uppercase; letter-spacing: .06em; }
+  .scen-desc { font-size: 10px; color: #666; line-height: 1.45; }
+
+  /* ── collapsible sections ── */
+  .section { border-bottom: 1px solid #eef2f3; }
+  .section-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px;
+    cursor: pointer; user-select: none;
+  }
+  .section-hd:hover { background: var(--bg); }
+  .section-hd h3 {
+    font-size: 11px; font-weight: 700; color: var(--teal-dark);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .section-hd .chevron { font-size: 11px; color: #999; transition: transform .25s; }
+  .section.collapsed .section-hd .chevron { transform: rotate(-90deg); }
+  .section-body {
+    overflow: hidden;
+    max-height: 2000px;
+    transition: max-height .3s ease, padding .3s ease;
+    padding: 0 14px 12px;
+  }
+  .section.collapsed .section-body { max-height: 0; padding-bottom: 0; }
+
+  /* ── stat cards ── */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card {
+    background: var(--bg); border-radius: 6px;
+    padding: 8px 10px; border-left: 3px solid var(--teal-mid);
   }
   .stat-card .val { font-size: 17px; font-weight: 700; color: var(--teal-dark); }
   .stat-card .lbl { font-size: 10px; color: #555; margin-top: 2px; }
   .stat-card.wide { grid-column: 1 / -1; border-left-color: var(--teal-dark); }
 
-  h3 { font-size: 11px; font-weight: 700; color: var(--teal-dark); text-transform: uppercase; letter-spacing: .06em; }
+  /* ── charts ── */
+  .chart-label { font-size: 11px; font-weight: 700; color: var(--teal-dark); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; margin-top: 8px; }
   .chart-wrap { position: relative; height: 160px; }
   .chart-wrap.tall { height: 200px; }
 
   /* ── subregion detail panel ── */
-  #subr-panel { display: flex; flex-direction: column; gap: 10px; }
-
-  #subr-placeholder {
-    font-size: 11px; color: #888; font-style: italic;
-    padding: 10px 0 2px;
-  }
-
+  #subr-placeholder { font-size: 11px; color: #888; font-style: italic; padding: 2px 0 4px; }
   #subr-detail { display: none; }
-
   #subr-header {
-    background: var(--bg);
-    border-radius: 6px;
-    padding: 10px 12px;
-    border-left: 3px solid var(--teal-dark);
+    background: var(--bg); border-radius: 6px;
+    padding: 10px 12px; border-left: 3px solid var(--teal-dark);
+    margin-bottom: 8px;
   }
   #subr-header .subr-name { font-size: 13px; font-weight: 700; color: var(--teal-dark); }
   #subr-header .subr-code { font-size: 11px; color: #666; margin-top: 1px; }
-  #subr-header .subr-rate {
-    font-size: 11px; margin-top: 6px;
-    display: flex; gap: 8px; flex-wrap: wrap;
-  }
+  #subr-header .subr-rate { font-size: 11px; margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
   #subr-header .subr-rate span { color: #444; }
-  #subr-header .subr-rate .badge {
-    font-weight: 700; padding: 1px 6px; border-radius: 3px; font-size: 10px;
-  }
+  #subr-header .subr-rate .badge { font-weight: 700; padding: 1px 6px; border-radius: 3px; font-size: 10px; }
   #subr-header .subr-rate .badge.above { background: #fde8e8; color: #a52b2b; }
   #subr-header .subr-rate .badge.below { background: #e2f5ec; color: #1a6b3c; }
-
   #subr-back {
     font-size: 11px; color: var(--teal-mid); background: none; border: none;
-    cursor: pointer; padding: 0; text-align: left;
+    cursor: pointer; padding: 4px 0; text-align: left; display: block; margin-top: 4px;
   }
   #subr-back:hover { text-decoration: underline; }
-
-  /* sector breakdown table */
   #subr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
   #subr-table thead th {
     color: #888; font-weight: 600; font-size: 10px;
-    border-bottom: 1px solid #e0e8ea;
-    padding: 3px 4px;
-    text-align: right;
-    white-space: nowrap;
+    border-bottom: 1px solid #e0e8ea; padding: 3px 4px;
+    text-align: right; white-space: nowrap;
   }
   #subr-table thead th:first-child { text-align: left; }
   #subr-table tbody td {
-    padding: 5px 4px;
-    border-bottom: 1px solid #f0f4f5;
-    text-align: right;
-    vertical-align: middle;
+    padding: 5px 4px; border-bottom: 1px solid #f0f4f5;
+    text-align: right; vertical-align: middle;
   }
   #subr-table tbody td:first-child { text-align: left; font-weight: 600; }
   #subr-table tbody tr:last-child td { border-bottom: none; font-weight: 700; color: var(--teal-dark); }
-  #subr-table .bar-cell { padding-right: 6px; min-width: 50px; }
   .mini-bar-wrap { background: #eef2f3; border-radius: 2px; height: 5px; margin-top: 2px; }
   .mini-bar { background: var(--teal-mid); border-radius: 2px; height: 5px; }
-  .sector-dot {
-    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    margin-right: 4px; vertical-align: middle; flex-shrink: 0;
+  .sector-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+  /* ── RE glossary table ── */
+  .re-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .re-table tr { border-bottom: 1px solid #f0f4f5; }
+  .re-table tr:last-child { border-bottom: none; }
+  .re-table td { padding: 5px 4px; vertical-align: middle; }
+  .re-abbr {
+    font-weight: 700; color: var(--teal-dark); white-space: nowrap;
+    padding-right: 10px; width: 72px;
   }
 
-  /* ── national charts section ── */
-  #national-charts { display: flex; flex-direction: column; gap: 14px; }
-
-  #footnote {
-    font-size: 10px; line-height: 1.55; color: #666;
-    border-top: 1px solid #e4ecee;
-    padding-top: 10px;
-  }
+  /* ── footnote ── */
+  #footnote { font-size: 10px; line-height: 1.55; color: #666; }
 
   /* ── map ── */
   #map {
     position: fixed;
-    top: 48px; left: 320px; right: 0; bottom: 0;
+    top: var(--header-h); left: var(--sidebar-w); right: 0; bottom: 0;
     z-index: 500;
   }
 
   /* ── legend ── */
   .legend {
-    background: rgba(255,255,255,.92);
-    padding: 8px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    box-shadow: 0 1px 5px rgba(0,0,0,.2);
-    line-height: 1.5;
+    background: rgba(255,255,255,.92); padding: 8px 10px;
+    border-radius: 6px; font-size: 11px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.2); line-height: 1.5;
   }
   .legend-title { font-weight: 700; margin-bottom: 4px; color: var(--teal-dark); }
   .legend-row { display: flex; align-items: center; gap: 5px; }
-  .legend-swatch {
-    display: inline-block; width: 14px; height: 14px;
-    border-radius: 2px; flex-shrink: 0;
-  }
+  .legend-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 2px; flex-shrink: 0; }
 
   /* ── Leaflet popup ── */
   .popup-inner { font-size: 12px; line-height: 1.6; min-width: 180px; }
   .popup-inner strong { color: var(--teal-dark); }
   .popup-inner .sector-tag {
-    display: inline-block;
-    background: var(--teal-light);
-    color: var(--navy);
-    border-radius: 3px;
-    padding: 1px 6px;
-    font-size: 10px;
-    font-weight: 700;
-    margin-bottom: 4px;
+    display: inline-block; background: var(--teal-light); color: var(--navy);
+    border-radius: 3px; padding: 1px 6px; font-size: 10px; font-weight: 700; margin-bottom: 4px;
   }
 
-  /* choropleth click highlight */
-  .subr-selected { weight: 2.5 !important; }
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    #sidebar-toggle-btn { display: flex; }
+    #sidebar-backdrop { display: block; }
+    #sidebar {
+      transform: translateX(-100%);
+      width: min(var(--sidebar-w), 90vw);
+      box-shadow: 4px 0 24px rgba(0,0,0,.28);
+    }
+    #sidebar.open { transform: translateX(0); }
+    #map { left: 0 !important; }
+    #header h1 { font-size: 12px; }
+  }
 </style>
 </head>
 <body>
 
 <div id="header">
   <h1>FPFA Carbon Intensity &amp; Macrogrid Tool</h1>
+  <button id="sidebar-toggle-btn" onclick="toggleSidebar()">☰ Dashboard</button>
 </div>
 
+<div id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
 <div id="sidebar">
-  <div class="stat-grid">
-    <div class="stat-card wide">
-      <div class="val" id="stat-natavg">—</div>
-      <div class="lbl">National avg emission rate (lb CO₂/MWh)</div>
+
+  <!-- Scenario selector -->
+  <div class="scenario-section">
+    <span class="scen-label">Scenario</span>
+    <div class="scen-tabs">
+      <button class="scen-tab active" data-scen="macrogrid">Full Macrogrid</button>
+      <button class="scen-tab" data-scen="nietc">NIETC Corridors</button>
+      <button class="scen-tab" data-scen="itcs">NERC ITCS</button>
     </div>
-    <div class="stat-card">
-      <div class="val" id="stat-facilities">—</div>
-      <div class="lbl">TRI facilities mapped</div>
-    </div>
-    <div class="stat-card">
-      <div class="val" id="stat-scope2">—</div>
-      <div class="lbl">Total Scope 2 current (Mt CO₂e/yr)</div>
-    </div>
-    <div class="stat-card wide">
-      <div class="val" id="stat-reduction">—</div>
-      <div class="lbl">Macrogrid reduction potential (Mt CO₂e/yr) &amp; % of Scope 2</div>
-    </div>
+    <p class="scen-desc" id="scen-desc"></p>
   </div>
 
-  <!-- subregion detail panel -->
-  <div id="subr-panel">
-    <p id="subr-placeholder">Click a subregion on the map to explore sector detail.</p>
-    <div id="subr-detail">
-      <div id="subr-header">
-        <div class="subr-name" id="subr-name-text"></div>
-        <div class="subr-code" id="subr-code-text"></div>
-        <div class="subr-rate">
-          <span id="subr-rate-text"></span>
-          <span class="badge" id="subr-pct-badge"></span>
+  <!-- Summary stats -->
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <h3>Summary Stats</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="stat-grid">
+        <div class="stat-card wide">
+          <div class="val" id="stat-natavg">—</div>
+          <div class="lbl">National avg emission rate (t CO₂/MWh)</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="stat-facilities">—</div>
+          <div class="lbl">TRI facilities mapped</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="stat-scope2">—</div>
+          <div class="lbl">Total Scope 2 current (Mt CO₂e/yr)</div>
+        </div>
+        <div class="stat-card wide">
+          <div class="val" id="stat-reduction">—</div>
+          <div class="lbl">Scenario reduction potential (Mt CO₂e/yr) &amp; % of Scope 2</div>
         </div>
       </div>
-      <table id="subr-table">
-        <thead>
-          <tr>
-            <th>Sector</th>
-            <th title="TRI facilities">Fac</th>
-            <th>Current<br>Mt/yr</th>
-            <th>Reduction<br>Mt/yr</th>
-            <th>%</th>
-          </tr>
-        </thead>
-        <tbody id="subr-tbody"></tbody>
-      </table>
-      <button id="subr-back">← Back to national view</button>
     </div>
   </div>
 
-  <!-- national charts (hidden when subregion selected) -->
-  <div id="national-charts">
-    <div>
-      <h3>Scope 2 by Sector (Mt CO₂e/yr)</h3>
+  <!-- Subregion detail -->
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <h3>Subregion Detail</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p id="subr-placeholder">Click a subregion on the map to explore sector detail.</p>
+      <div id="subr-detail">
+        <div id="subr-header">
+          <div class="subr-name" id="subr-name-text"></div>
+          <div class="subr-code" id="subr-code-text"></div>
+          <div class="subr-re" id="subr-re-text" style="font-size:10px;color:#666;margin-top:2px;"></div>
+          <div class="subr-rate">
+            <span id="subr-rate-text"></span>
+            <span class="badge" id="subr-pct-badge"></span>
+          </div>
+        </div>
+        <table id="subr-table">
+          <thead>
+            <tr>
+              <th>Sector</th>
+              <th title="TRI facilities">Fac</th>
+              <th>Current<br>Mt/yr</th>
+              <th id="subr-col-scen">Scenario<br>Mt/yr</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody id="subr-tbody"></tbody>
+        </table>
+        <button id="subr-back">← Back to national view</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <h3>Charts</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p class="chart-label">Scope 2 by Sector (Mt CO₂e/yr)</p>
       <div class="chart-wrap">
         <canvas id="chart-sector"></canvas>
       </div>
-    </div>
-    <div>
-      <h3>Top 8 Subregions — Reduction Potential (Mt CO₂e/yr)</h3>
+      <p class="chart-label">Top 8 Subregions — Reduction Potential (Mt CO₂e/yr)</p>
       <div class="chart-wrap tall">
         <canvas id="chart-subregion"></canvas>
       </div>
     </div>
   </div>
 
-  <p id="footnote">
-    Scope 2 estimates from EIA MECS 2022 Table 7.6 electricity consumption by sector and Census region,
-    distributed to eGRID 2023 subregions by net generation share. Macrogrid scenario assumes
-    demand-weighted national average emission rate replaces regional rate — a static counterfactual
-    that excludes transmission physics and induced renewables buildout, likely understating full
-    macrogrid benefit. Facility locations from EPA TRI; solar sector may be undercounted due to
-    TRI reporting thresholds.
-  </p>
-</div>
+  <!-- Regional Entities glossary -->
+  <div class="section collapsed">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <h3>NERC Regional Entities</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <table class="re-table">
+        <tbody>
+          <tr><td class="re-abbr">MRO</td><td>Midwest Reliability Organization</td></tr>
+          <tr><td class="re-abbr">NPCC</td><td>Northeast Power Coordinating Council</td></tr>
+          <tr><td class="re-abbr">RF</td><td>ReliabilityFirst</td></tr>
+          <tr><td class="re-abbr">SERC</td><td>Southeast Regional Council</td></tr>
+          <tr><td class="re-abbr">Texas RE</td><td>Texas Reliability Entity</td></tr>
+          <tr><td class="re-abbr">WECC</td><td>Western Electricity Coordinating Council</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="section">
+    <div class="section-hd" onclick="toggleSection(this)">
+      <h3>Sources &amp; Notes</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="section-body">
+      <p id="footnote">
+        Scope 2 estimates from EIA MECS 2022 Table 7.6 electricity consumption by sector and Census region,
+        distributed to eGRID 2023 subregions by net generation share. Emission rates converted from lb CO₂/MWh to t CO₂/MWh.
+        <br><br>
+        <strong>Full Macrogrid:</strong> all subregions equalize to the demand-weighted national average — theoretical maximum.
+        <br>
+        <strong>NIETC Corridors:</strong> applies ~40% rate equalization for regions in DOE's 2024 National Interest Electric Transmission Corridor designations (PJM, MISO, SPP-North, WECC, New England, Southeast); Texas and Hawaii excluded.
+        <br>
+        <strong>NERC ITCS:</strong> applies ~55% equalization across all connected regions based on NERC's 2023 Interregional Transfer Capability Study findings across 7 studied interfaces; Texas and Hawaii excluded.
+        <br><br>
+        All scenarios are static counterfactuals excluding transmission physics and induced renewables buildout.
+        Facility locations from EPA TRI; solar may be undercounted due to TRI thresholds.
+      </p>
+    </div>
+  </div>
+
+</div><!-- #sidebar -->
 
 <div id="map"></div>
 
 <script>
-// ── constants ────────────────────────────────────────────────────────────────
+// ── constants ─────────────────────────────────────────────────────────────────
 
 const CENSUS_EGRID = {
   Northeast: ["NEWE", "NYCW", "NYUP", "RFCE", "NYLI"],
@@ -291,7 +412,70 @@ function sectorFromNaics(naics) {
   return null;
 }
 
-// ── color helpers ────────────────────────────────────────────────────────────
+// ── NERC Regional Entities ────────────────────────────────────────────────────
+
+const NERC_RE = {
+  "MRO":      "Midwest Reliability Organization",
+  "NPCC":     "Northeast Power Coordinating Council",
+  "RF":       "ReliabilityFirst",
+  "SERC":     "Southeast Regional Council",
+  "Texas RE": "Texas Reliability Entity",
+  "WECC":     "Western Electricity Coordinating Council",
+};
+
+const SUBR_RE = {
+  NEWE: "NPCC", NYCW: "NPCC", NYUP: "NPCC", NYLI: "NPCC",
+  RFCE: "RF",   RFCM: "RF",   RFCW: "RF",
+  MROE: "MRO",  MROW: "MRO",  SPNO: "MRO",
+  SPSO: "SERC", SRMV: "SERC", SRMW: "SERC", SRSO: "SERC", SRTV: "SERC", SRVC: "SERC", FRCC: "SERC",
+  ERCT: "Texas RE",
+  AZNM: "WECC", CAMX: "WECC", NWPP: "WECC", RMPA: "WECC", HIMS: "WECC", HIOA: "WECC",
+};
+
+// Physically impossible to connect (island grids)
+const ISLAND_GRIDS = new Set(["HIMS", "HIOA"]);
+// Isolated from Eastern/Western interconnections (ERCOT)
+const ERCOT_GRIDS = new Set(["ERCT"]);
+
+// NIET C corridor regions (DOE 2024 designations — PJM, MISO, SPP-N, WECC, NE, Southeast)
+const NIETC_REGIONS = new Set([
+  "NEWE","NYCW","NYUP","NYLI",
+  "RFCE","RFCM","RFCW",
+  "MROW","MROE",
+  "SPNO",
+  "CAMX","NWPP","AZNM","RMPA",
+  "SRVC","SRSO",
+]);
+
+const SCENARIOS = {
+  macrogrid: {
+    name: "Full Macrogrid",
+    desc: "Assumes a fully interconnected national grid. All subregions equalize to the demand-weighted national average emission rate — the theoretical maximum benefit.",
+    getRate(code, rate, rNat) {
+      if (ISLAND_GRIDS.has(code)) return rate;
+      return rNat;
+    },
+  },
+  nietc: {
+    name: "NIETC Corridors",
+    desc: "Models DOE's 2024 National Interest Electric Transmission Corridor designations. Applies ~40% rate equalization for PJM, MISO, SPP-North, WECC, New England, and Southeast corridor regions. Texas and Hawaii excluded.",
+    getRate(code, rate, rNat) {
+      if (ISLAND_GRIDS.has(code) || ERCOT_GRIDS.has(code)) return rate;
+      if (NIETC_REGIONS.has(code)) return rate - 0.40 * (rate - rNat);
+      return rate;
+    },
+  },
+  itcs: {
+    name: "NERC ITCS",
+    desc: "Based on NERC's 2023 Interregional Transfer Capability Study, which found ~55% of full macrogrid benefit is achievable through enhanced transfer capacity across 7 key interfaces. Texas and Hawaii excluded.",
+    getRate(code, rate, rNat) {
+      if (ISLAND_GRIDS.has(code) || ERCOT_GRIDS.has(code)) return rate;
+      return rate - 0.55 * (rate - rNat);
+    },
+  },
+};
+
+// ── color helpers ─────────────────────────────────────────────────────────────
 
 function hexToRgb(hex) {
   return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
@@ -316,10 +500,11 @@ function reductionColor(delta, maxDelta) {
   return lerpColor("#ffffff", "#194852", Math.max(0, Math.min(1, delta / maxDelta)));
 }
 
-// ── macrogrid calculation ────────────────────────────────────────────────────
+// ── scenario computation ──────────────────────────────────────────────────────
 
-function computeMacrogrid(egridRates, mecsRows) {
-  // MECS lookup: {census_region: {sector: elec_mkwh}}
+function computeScenario(egridRates, mecsRows, scenarioKey) {
+  const scenario = SCENARIOS[scenarioKey];
+
   const mecsMap = {};
   for (const row of mecsRows) {
     if (row.elec_mkwh === null) continue;
@@ -330,20 +515,17 @@ function computeMacrogrid(egridRates, mecsRows) {
     mecsMap[r][s] = (mecsMap[r][s] || 0) + row.elec_mkwh;
   }
 
-  // Census region net generation totals
   const censusNetGen = {};
   for (const [region, codes] of Object.entries(CENSUS_EGRID)) {
     censusNetGen[region] = codes.reduce((sum, c) => sum + (egridRates[c]?.net_gen || 0), 0);
   }
 
-  // National demand-weighted avg
   let totalGen = 0, totalGxR = 0;
   for (const d of Object.values(egridRates)) {
     if (d.net_gen && d.co2_rate) { totalGen += d.net_gen; totalGxR += d.co2_rate * d.net_gen; }
   }
   const R_national = totalGxR / totalGen;
 
-  // Per-cell results
   const cells = {};
   const subregionDelta = {};
 
@@ -355,11 +537,12 @@ function computeMacrogrid(egridRates, mecsRows) {
       if (elec_mkwh == null) continue;
       const share = censusNetGen[census] > 0 ? (d.net_gen || 0) / censusNetGen[census] : 0;
       const elec_MWh = elec_mkwh * 1_000_000 * share;
-      const scope2_current   = elec_MWh * d.co2_rate / 2204.6;
-      const scope2_macrogrid = elec_MWh * R_national  / 2204.6;
-      const delta = scope2_current - scope2_macrogrid;
+      const R_eff = scenario.getRate(code, d.co2_rate, R_national);
+      const scope2_current  = elec_MWh * d.co2_rate / 2204.6;
+      const scope2_scenario = elec_MWh * R_eff       / 2204.6;
+      const delta = scope2_current - scope2_scenario;
       const reduction_pct = scope2_current > 0 ? delta / scope2_current * 100 : 0;
-      cells[`${sector}|${code}`] = { sector, subregion: code, census, elec_MWh, scope2_current, scope2_macrogrid, delta, reduction_pct };
+      cells[`${sector}|${code}`] = { sector, subregion: code, census, elec_MWh, scope2_current, scope2_scenario, delta, reduction_pct };
       subregionDelta[code] = (subregionDelta[code] || 0) + delta;
     }
   }
@@ -367,7 +550,37 @@ function computeMacrogrid(egridRates, mecsRows) {
   return { cells, subregionDelta, R_national };
 }
 
-// ── main ─────────────────────────────────────────────────────────────────────
+// ── UI helpers ────────────────────────────────────────────────────────────────
+
+function toggleSidebar() {
+  const sidebar  = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  const open = !sidebar.classList.contains("open");
+  sidebar.classList.toggle("open", open);
+  backdrop.classList.toggle("open", open);
+}
+
+function toggleSection(hd) {
+  hd.closest(".section").classList.toggle("collapsed");
+}
+
+// ── module-level state ────────────────────────────────────────────────────────
+
+let currentScenario   = "macrogrid";
+let currentCells      = {};
+let currentSubrDelta  = {};
+let currentRNational  = 0;
+let selectedSubrCode  = null;
+let facCountBySS      = {};
+let _egridRates       = {};
+let _mecsRows         = [];
+
+let choroplethLayer = null;
+let macrogridLayer  = null;
+let sectorChart     = null;
+let subregionChart  = null;
+
+// ── main ──────────────────────────────────────────────────────────────────────
 
 Promise.all([
   fetch("data/processed/egrid_subregions.geojson").then(r => r.json()),
@@ -377,19 +590,15 @@ Promise.all([
 ]).then(([geojson, egridRates, mecsRows, triFacilities]) => {
   init(geojson, egridRates, mecsRows, triFacilities);
 }).catch(err => {
-  document.body.innerHTML += `<div style="position:fixed;top:60px;left:340px;padding:20px;color:red;font-weight:bold;">
+  document.body.innerHTML += `<div style="position:fixed;top:60px;left:0;right:0;padding:20px;color:red;font-weight:bold;background:#fff;">
     Error loading data: ${err.message}<br>Make sure you ran build.py and are serving from project root.</div>`;
 });
 
 function init(geojson, egridRates, mecsRows, triFacilities) {
-  const { cells, subregionDelta, R_national } = computeMacrogrid(egridRates, mecsRows);
-  const allCells = Object.values(cells);
-  const totalScope2 = allCells.reduce((s, c) => s + c.scope2_current, 0);
-  const totalDelta  = allCells.reduce((s, c) => s + c.delta, 0);
-  const reductionPct = totalScope2 > 0 ? totalDelta / totalScope2 * 100 : 0;
+  _egridRates = egridRates;
+  _mecsRows   = mecsRows;
 
-  // ── Pre-compute facility counts by subregion+sector ───────────────────────
-  const facCountBySS = {}; // "sector|subregion" → count
+  // Pre-compute facility counts
   for (const f of triFacilities) {
     if (f.egrid_subregion) {
       const key = `${f.sector}|${f.egrid_subregion}`;
@@ -397,17 +606,23 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     }
   }
 
-  // ── Summary stats ─────────────────────────────────────────────────────────
-  document.getElementById("stat-natavg").textContent     = R_national.toFixed(0);
-  document.getElementById("stat-facilities").textContent = triFacilities.length.toLocaleString();
-  document.getElementById("stat-scope2").textContent     = (totalScope2 / 1e6).toFixed(1);
-  document.getElementById("stat-reduction").textContent  =
-    `${(totalDelta / 1e6).toFixed(1)} (${reductionPct.toFixed(1)}%)`;
+  // Initial scenario computation
+  const result = computeScenario(egridRates, mecsRows, "macrogrid");
+  currentCells     = result.cells;
+  currentSubrDelta = result.subregionDelta;
+  currentRNational = result.R_national;
 
-  // ── Rate stats for choropleth ─────────────────────────────────────────────
+  const allCells   = Object.values(currentCells);
+  const totalScope2 = allCells.reduce((s, c) => s + c.scope2_current, 0);
+
+  // Rate stats for choropleth
   const rates   = Object.values(egridRates).map(d => d.co2_rate).filter(Boolean);
   const minRate = Math.min(...rates);
   const maxRate = Math.max(...rates);
+
+  // Static stats (don't change with scenario)
+  document.getElementById("stat-facilities").textContent = triFacilities.length.toLocaleString();
+  document.getElementById("stat-scope2").textContent     = (totalScope2 / 1e6).toFixed(1);
 
   // ── Leaflet map ───────────────────────────────────────────────────────────
   const map = L.map("map").setView([39, -96], 4);
@@ -415,116 +630,33 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     attribution: "© OpenStreetMap contributors", opacity: 0.4,
   }).addTo(map);
 
-  // Facility markers get their own pane above the choropleth so they always
-  // receive mouse events first, regardless of choropleth bringToFront calls.
   map.createPane("facilitiesPane");
   map.getPane("facilitiesPane").style.zIndex = 450;
   map.getPane("facilitiesPane").style.pointerEvents = "none";
   const facilityRenderer = L.canvas({ pane: "facilitiesPane" });
 
-  // ── Subregion detail panel logic ──────────────────────────────────────────
-  let selectedLayer = null;
-
-  function showSubregionDetail(code) {
-    const d = egridRates[code] || {};
-    const pct = d.co2_rate ? ((d.co2_rate - R_national) / R_national * 100) : null;
-
-    document.getElementById("subr-name-text").textContent = d.name || code;
-    document.getElementById("subr-code-text").textContent = code;
-    document.getElementById("subr-rate-text").textContent =
-      `${d.co2_rate?.toFixed(1) ?? "—"} lb CO₂/MWh`;
-
-    const badge = document.getElementById("subr-pct-badge");
-    if (pct !== null) {
-      badge.textContent = `${pct > 0 ? "+" : ""}${pct.toFixed(1)}% vs national`;
-      badge.className = `badge ${pct > 0 ? "above" : "below"}`;
-    } else {
-      badge.textContent = "";
-    }
-
-    // Build sector rows, sorted by delta descending
-    const subrCells = SECTORS
-      .map(sector => {
-        const cell = cells[`${sector}|${code}`];
-        return {
-          sector,
-          fac:     facCountBySS[`${sector}|${code}`] || 0,
-          current: cell ? cell.scope2_current : 0,
-          delta:   cell ? cell.delta : 0,
-          pct:     cell ? cell.reduction_pct : 0,
-        };
-      })
-      .filter(r => r.current > 0 || r.fac > 0)
-      .sort((a, b) => b.delta - a.delta);
-
-    const maxCurrent = Math.max(...subrCells.map(r => r.current), 1);
-    const totalCurrent = subrCells.reduce((s, r) => s + r.current, 0);
-    const totalDeltaSubr = subrCells.reduce((s, r) => s + r.delta, 0);
-    const totalFac = subrCells.reduce((s, r) => s + r.fac, 0);
-
-    const tbody = document.getElementById("subr-tbody");
-    tbody.innerHTML = subrCells.map(r => {
-      const barPct = totalCurrent > 0 ? (r.current / maxCurrent * 100).toFixed(0) : 0;
-      return `<tr>
-        <td>
-          <span class="sector-dot" style="background:${SECTOR_COLORS[r.sector]}"></span>${r.sector}
-          <div class="mini-bar-wrap"><div class="mini-bar" style="width:${barPct}%"></div></div>
-        </td>
-        <td>${r.fac || "—"}</td>
-        <td>${(r.current / 1e6).toFixed(3)}</td>
-        <td>${r.delta > 0 ? (r.delta / 1e6).toFixed(3) : "—"}</td>
-        <td>${r.pct > 0 ? r.pct.toFixed(1) + "%" : "—"}</td>
-      </tr>`;
-    }).join("") + `<tr>
-      <td>Total</td>
-      <td>${totalFac}</td>
-      <td>${(totalCurrent / 1e6).toFixed(3)}</td>
-      <td>${(totalDeltaSubr / 1e6).toFixed(3)}</td>
-      <td>${totalCurrent > 0 ? (totalDeltaSubr / totalCurrent * 100).toFixed(1) + "%" : "—"}</td>
-    </tr>`;
-
-    document.getElementById("subr-placeholder").style.display = "none";
-    document.getElementById("subr-detail").style.display = "block";
-    document.getElementById("national-charts").style.display = "none";
-  }
-
-  function showNationalView() {
-    document.getElementById("subr-placeholder").style.display = "";
-    document.getElementById("subr-detail").style.display = "none";
-    document.getElementById("national-charts").style.display = "";
-    if (selectedLayer) { choroplethLayer.resetStyle(selectedLayer); selectedLayer = null; }
-  }
-
-  document.getElementById("subr-back").addEventListener("click", showNationalView);
-
-  // ── Layer 1: eGRID choropleth ─────────────────────────────────────────────
-  function rateStyle(feature) {
-    const code = feature.properties.Subregion;
-    const rate = egridRates[code]?.co2_rate;
-    return { fillColor: co2Color(rate, R_national, minRate, maxRate), fillOpacity: 0.72, color: "#fff", weight: 1 };
-  }
-
-  const choroplethLayer = L.geoJSON(geojson, {
-    style: rateStyle,
+  // ── Choropleth layer (static — shows current eGRID rates) ────────────────
+  choroplethLayer = L.geoJSON(geojson, {
+    style(feature) {
+      const code = feature.properties.Subregion;
+      const rate = egridRates[code]?.co2_rate;
+      return { fillColor: co2Color(rate, currentRNational, minRate, maxRate), fillOpacity: 0.72, color: "#fff", weight: 1 };
+    },
     onEachFeature(feature, layer) {
       const code = feature.properties.Subregion;
       const d = egridRates[code] || {};
-      const pct = d.co2_rate ? ((d.co2_rate - R_national) / R_national * 100).toFixed(1) : "—";
+      const rT = (d.co2_rate / 2204.6).toFixed(3);
+      const pct = d.co2_rate ? ((d.co2_rate - currentRNational) / currentRNational * 100).toFixed(1) : "—";
       const label = d.name && d.name !== code ? `${d.name} (${code})` : code;
+      const reAbbr = SUBR_RE[code];
+      const reLine = reAbbr ? `<span style="color:#666;font-size:10px;">${reAbbr} — ${NERC_RE[reAbbr]}</span><br>` : "";
       layer.bindTooltip(
-        `<strong>${label}</strong><br>
-         ${d.co2_rate?.toFixed(0) ?? "—"} lb CO₂/MWh &nbsp;
-         ${pct > 0 ? "+" : ""}${pct}% vs avg`,
+        `<strong>${label}</strong><br>${reLine}${rT} t CO₂/MWh &nbsp; ${pct > 0 ? "+" : ""}${pct}% vs avg`,
         { sticky: true }
       );
-      layer.on("mouseover", () => {
-        if (layer !== selectedLayer) layer.setStyle({ weight: 2, color: "#444" });
-        layer.bringToFront();
-      });
-      layer.on("mouseout", () => {
-        if (layer !== selectedLayer) choroplethLayer.resetStyle(layer);
-      });
-      layer.on("click", () => {
+      layer.on("mouseover", () => { if (layer !== selectedLayer) layer.setStyle({ weight: 2, color: "#444" }); layer.bringToFront(); });
+      layer.on("mouseout",  () => { if (layer !== selectedLayer) choroplethLayer.resetStyle(layer); });
+      layer.on("click",     () => {
         if (selectedLayer && selectedLayer !== layer) choroplethLayer.resetStyle(selectedLayer);
         selectedLayer = layer;
         layer.setStyle({ weight: 2.5, color: "#194852", dashArray: "4" });
@@ -533,22 +665,23 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     },
   });
 
-  // ── Layer 3: macrogrid reduction overlay ──────────────────────────────────
-  const maxDelta = Math.max(...Object.values(subregionDelta));
+  let selectedLayer = null;
 
-  const macrogridLayer = L.geoJSON(geojson, {
+  // ── Macrogrid / scenario reduction layer ─────────────────────────────────
+  let maxDelta = Math.max(...Object.values(currentSubrDelta).filter(v => v > 0), 0.001);
+
+  macrogridLayer = L.geoJSON(geojson, {
     style(feature) {
       const code = feature.properties.Subregion;
-      return { fillColor: reductionColor(subregionDelta[code] || 0, maxDelta), fillOpacity: 0.8, color: "#fff", weight: 1 };
+      return { fillColor: reductionColor(currentSubrDelta[code] || 0, maxDelta), fillOpacity: 0.8, color: "#fff", weight: 1 };
     },
     onEachFeature(feature, layer) {
       const code = feature.properties.Subregion;
       const d = egridRates[code] || {};
-      const delta = subregionDelta[code] || 0;
-      const label2 = d.name && d.name !== code ? `${d.name} (${code})` : code;
+      const delta = currentSubrDelta[code] || 0;
+      const label = d.name && d.name !== code ? `${d.name} (${code})` : code;
       layer.bindTooltip(
-        `<strong>${label2}</strong><br>
-         Reduction: ${(delta / 1e6).toFixed(2)} Mt CO₂e/yr`,
+        `<strong>${label}</strong><br>Reduction: ${(delta / 1e6).toFixed(2)} Mt CO₂e/yr`,
         { sticky: true }
       );
       layer.on("mouseover", () => { layer.setStyle({ weight: 2, color: "#444" }); layer.bringToFront(); });
@@ -557,7 +690,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     },
   });
 
-  // ── Layer 2: TRI facility markers ─────────────────────────────────────────
+  // ── TRI facility markers ──────────────────────────────────────────────────
   const turfGeo = turf.featureCollection(
     geojson.features.map(f => turf.feature(f.geometry, { Subregion: f.properties.Subregion }))
   );
@@ -582,8 +715,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     marker.on("click", () => {
       const subr = f.egrid_subregion || findSubregion(f.lat, f.lon);
       const subrRec = egridRates[subr];
-      const subrLabel = subrRec?.name && subrRec.name !== subr
-        ? `${subrRec.name} (${subr})` : subr;
+      const subrLabel = subrRec?.name && subrRec.name !== subr ? `${subrRec.name} (${subr})` : subr;
       marker.bindPopup(`
         <div class="popup-inner">
           <div class="sector-tag">${f.sector}</div><br>
@@ -600,7 +732,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   // ── Layer control ─────────────────────────────────────────────────────────
   const baseMaps = {
     "CO₂ Emission Rate": choroplethLayer,
-    "Macrogrid Reduction Potential": macrogridLayer,
+    "Scenario Reduction Potential": macrogridLayer,
   };
   const overlays = {};
   for (const sector of SECTORS) {
@@ -616,36 +748,39 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   legend.onAdd = () => {
     const div = L.DomUtil.create("div", "legend");
     const steps = 6;
-    let html = `<div class="legend-title">CO₂ Rate (lb/MWh)</div>`;
+    let html = `<div class="legend-title">CO₂ Rate (t/MWh)</div>`;
     for (let i = 0; i <= steps; i++) {
       const rate = minRate + (maxRate - minRate) * i / steps;
-      const color = co2Color(rate, R_national, minRate, maxRate);
-      html += `<div class="legend-row">
-        <span class="legend-swatch" style="background:${color}"></span>${rate.toFixed(0)}
-      </div>`;
+      const color = co2Color(rate, currentRNational, minRate, maxRate);
+      html += `<div class="legend-row"><span class="legend-swatch" style="background:${color}"></span>${(rate/2204.6).toFixed(3)}</div>`;
     }
-    html += `<div style="margin-top:5px;font-size:10px;color:#555;">◎ national avg: ${R_national.toFixed(0)}</div>`;
+    html += `<div style="margin-top:5px;font-size:10px;color:#555;">◎ national avg: ${(currentRNational/2204.6).toFixed(3)}</div>`;
     div.innerHTML = html;
     return div;
   };
   legend.addTo(map);
 
-  // ── Chart 1: sector grouped bars ─────────────────────────────────────────
-  const sectorTotals = {};
-  for (const sector of SECTORS) {
-    const sc = allCells.filter(c => c.sector === sector);
-    sectorTotals[sector] = {
-      current:   sc.reduce((s, c) => s + c.scope2_current, 0) / 1e6,
-      macrogrid: sc.reduce((s, c) => s + c.scope2_macrogrid, 0) / 1e6,
-    };
+  // ── Charts ────────────────────────────────────────────────────────────────
+  function buildSectorTotals(cells) {
+    const out = {};
+    for (const sector of SECTORS) {
+      const sc = Object.values(cells).filter(c => c.sector === sector);
+      out[sector] = {
+        current:  sc.reduce((s, c) => s + c.scope2_current, 0) / 1e6,
+        scenario: sc.reduce((s, c) => s + c.scope2_scenario, 0) / 1e6,
+      };
+    }
+    return out;
   }
-  new Chart(document.getElementById("chart-sector"), {
+
+  const initSectorTotals = buildSectorTotals(currentCells);
+  sectorChart = new Chart(document.getElementById("chart-sector"), {
     type: "bar",
     data: {
       labels: SECTORS,
       datasets: [
-        { label: "Current",   data: SECTORS.map(s => sectorTotals[s].current.toFixed(3)),   backgroundColor: "#194852" },
-        { label: "Macrogrid", data: SECTORS.map(s => sectorTotals[s].macrogrid.toFixed(3)), backgroundColor: "#7dceda" },
+        { label: "Current",  data: SECTORS.map(s => initSectorTotals[s].current.toFixed(3)),  backgroundColor: "#194852" },
+        { label: "Scenario", data: SECTORS.map(s => initSectorTotals[s].scenario.toFixed(3)), backgroundColor: "#7dceda" },
       ],
     },
     options: {
@@ -658,17 +793,19 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     },
   });
 
-  // ── Chart 2: top 8 subregions by reduction ────────────────────────────────
-  const sortedSubr = Object.entries(subregionDelta)
-    .map(([code, delta]) => ({ code, label: `${egridRates[code]?.name || code}`, delta: delta / 1e6 }))
-    .sort((a, b) => b.delta - a.delta)
-    .slice(0, 8);
+  function buildSortedSubr(subregionDelta) {
+    return Object.entries(subregionDelta)
+      .map(([code, delta]) => ({ code, label: egridRates[code]?.name || code, delta: delta / 1e6 }))
+      .sort((a, b) => b.delta - a.delta)
+      .slice(0, 8);
+  }
 
-  new Chart(document.getElementById("chart-subregion"), {
+  const initSortedSubr = buildSortedSubr(currentSubrDelta);
+  subregionChart = new Chart(document.getElementById("chart-subregion"), {
     type: "bar",
     data: {
-      labels: sortedSubr.map(d => d.label),
-      datasets: [{ label: "Reduction (Mt CO₂e/yr)", data: sortedSubr.map(d => d.delta.toFixed(3)), backgroundColor: "#348397" }],
+      labels: initSortedSubr.map(d => d.label),
+      datasets: [{ label: "Reduction (Mt CO₂e/yr)", data: initSortedSubr.map(d => d.delta.toFixed(3)), backgroundColor: "#348397" }],
     },
     options: {
       indexAxis: "y",
@@ -680,8 +817,150 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
       },
     },
   });
-}
 
+  // ── Subregion detail ──────────────────────────────────────────────────────
+  function showSubregionDetail(code) {
+    selectedSubrCode = code;
+    const d = egridRates[code] || {};
+    const rT = d.co2_rate ? (d.co2_rate / 2204.6).toFixed(4) : "—";
+    const pct = d.co2_rate ? ((d.co2_rate - currentRNational) / currentRNational * 100) : null;
+
+    document.getElementById("subr-name-text").textContent = d.name || code;
+    document.getElementById("subr-code-text").textContent = code;
+    const reAbbr = SUBR_RE[code];
+    document.getElementById("subr-re-text").textContent =
+      reAbbr ? `${reAbbr} — ${NERC_RE[reAbbr]}` : "";
+    document.getElementById("subr-rate-text").textContent = `${rT} t CO₂/MWh`;
+
+    const badge = document.getElementById("subr-pct-badge");
+    if (pct !== null) {
+      badge.textContent = `${pct > 0 ? "+" : ""}${pct.toFixed(1)}% vs national`;
+      badge.className = `badge ${pct > 0 ? "above" : "below"}`;
+    } else {
+      badge.textContent = "";
+    }
+
+    document.getElementById("subr-col-scen").innerHTML = `${SCENARIOS[currentScenario].name}<br>Mt/yr`;
+
+    const subrCells = SECTORS.map(sector => {
+      const cell = currentCells[`${sector}|${code}`];
+      return {
+        sector,
+        fac:      facCountBySS[`${sector}|${code}`] || 0,
+        current:  cell ? cell.scope2_current  : 0,
+        scenario: cell ? cell.scope2_scenario : 0,
+        delta:    cell ? cell.delta : 0,
+        pct:      cell ? cell.reduction_pct : 0,
+      };
+    }).filter(r => r.current > 0 || r.fac > 0).sort((a, b) => b.delta - a.delta);
+
+    const maxCurrent = Math.max(...subrCells.map(r => r.current), 1);
+    const totalCurrent  = subrCells.reduce((s, r) => s + r.current, 0);
+    const totalScenario = subrCells.reduce((s, r) => s + r.scenario, 0);
+    const totalFac = subrCells.reduce((s, r) => s + r.fac, 0);
+
+    const tbody = document.getElementById("subr-tbody");
+    tbody.innerHTML = subrCells.map(r => {
+      const barPct = totalCurrent > 0 ? (r.current / maxCurrent * 100).toFixed(0) : 0;
+      return `<tr>
+        <td>
+          <span class="sector-dot" style="background:${SECTOR_COLORS[r.sector]}"></span>${r.sector}
+          <div class="mini-bar-wrap"><div class="mini-bar" style="width:${barPct}%"></div></div>
+        </td>
+        <td>${r.fac || "—"}</td>
+        <td>${(r.current  / 1e6).toFixed(3)}</td>
+        <td>${(r.scenario / 1e6).toFixed(3)}</td>
+        <td>${r.pct > 0 ? r.pct.toFixed(1) + "%" : (r.pct < 0 ? "▲" : "—")}</td>
+      </tr>`;
+    }).join("") + `<tr>
+      <td>Total</td>
+      <td>${totalFac}</td>
+      <td>${(totalCurrent  / 1e6).toFixed(3)}</td>
+      <td>${(totalScenario / 1e6).toFixed(3)}</td>
+      <td>${totalCurrent > 0 ? ((totalCurrent - totalScenario) / totalCurrent * 100).toFixed(1) + "%" : "—"}</td>
+    </tr>`;
+
+    document.getElementById("subr-placeholder").style.display = "none";
+    document.getElementById("subr-detail").style.display = "block";
+  }
+
+  function showNationalView() {
+    selectedSubrCode = null;
+    document.getElementById("subr-placeholder").style.display = "";
+    document.getElementById("subr-detail").style.display = "none";
+    if (selectedLayer) { choroplethLayer.resetStyle(selectedLayer); selectedLayer = null; }
+  }
+
+  document.getElementById("subr-back").addEventListener("click", showNationalView);
+
+  // ── Apply scenario ────────────────────────────────────────────────────────
+  function applyScenario(key) {
+    currentScenario = key;
+
+    const { cells, subregionDelta, R_national } = computeScenario(egridRates, mecsRows, key);
+    currentCells     = cells;
+    currentSubrDelta = subregionDelta;
+    currentRNational = R_national;
+
+    const allCells    = Object.values(cells);
+    const totalScope2 = allCells.reduce((s, c) => s + c.scope2_current, 0);
+    const totalDelta  = allCells.reduce((s, c) => s + c.delta, 0);
+    const reductionPct = totalScope2 > 0 ? totalDelta / totalScope2 * 100 : 0;
+
+    // Scenario description
+    document.getElementById("scen-desc").textContent = SCENARIOS[key].desc;
+
+    // Stats
+    document.getElementById("stat-natavg").textContent    = (R_national / 2204.6).toFixed(3);
+    document.getElementById("stat-reduction").textContent =
+      `${(totalDelta / 1e6).toFixed(1)} (${reductionPct.toFixed(1)}%)`;
+
+    // Macrogrid layer
+    maxDelta = Math.max(...Object.values(subregionDelta).filter(v => v > 0), 0.001);
+    macrogridLayer.setStyle(feature => {
+      const code = feature.properties.Subregion;
+      return { fillColor: reductionColor(subregionDelta[code] || 0, maxDelta), fillOpacity: 0.8, color: "#fff", weight: 1 };
+    });
+    macrogridLayer.eachLayer(layer => {
+      const code = layer.feature?.properties?.Subregion;
+      if (!code) return;
+      const d2 = egridRates[code] || {};
+      const delta = subregionDelta[code] || 0;
+      const lbl = d2.name && d2.name !== code ? `${d2.name} (${code})` : code;
+      layer.bindTooltip(
+        `<strong>${lbl}</strong><br>Reduction: ${(delta / 1e6).toFixed(2)} Mt CO₂e/yr`,
+        { sticky: true }
+      );
+    });
+
+    // Charts
+    const st = buildSectorTotals(cells);
+    sectorChart.data.datasets[0].data = SECTORS.map(s => st[s].current.toFixed(3));
+    sectorChart.data.datasets[1].data = SECTORS.map(s => st[s].scenario.toFixed(3));
+    sectorChart.data.datasets[1].label = SCENARIOS[key].name;
+    sectorChart.update();
+
+    const ss = buildSortedSubr(subregionDelta);
+    subregionChart.data.labels = ss.map(d => d.label);
+    subregionChart.data.datasets[0].data = ss.map(d => d.delta.toFixed(3));
+    subregionChart.update();
+
+    // Refresh subregion detail if open
+    if (selectedSubrCode) showSubregionDetail(selectedSubrCode);
+  }
+
+  // ── Scenario tabs ─────────────────────────────────────────────────────────
+  document.querySelectorAll(".scen-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".scen-tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      applyScenario(btn.dataset.scen);
+    });
+  });
+
+  // Initialize with macrogrid scenario stats/desc
+  applyScenario("macrogrid");
+}
 </script>
 </body>
 </html>
