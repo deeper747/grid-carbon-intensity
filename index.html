@@ -356,9 +356,9 @@
         <br><br>
         <strong>Full Macrogrid:</strong> all subregions equalize to the demand-weighted national average — theoretical maximum.
         <br>
-        <strong>NIETC Corridors:</strong> applies ~40% rate equalization for regions in DOE's 2024 National Interest Electric Transmission Corridor designations (PJM, MISO, SPP-North, WECC, New England, Southeast); Texas and Hawaii excluded.
+        <strong>NIETC Corridors:</strong> uses a coarse eGRID-level NIETC buildout and averages each designated corridor region with its directly connected NIETC neighbors, matching the same post-build averaging logic used in the ITCS scenario. Texas and Hawaii remain unchanged.
         <br>
-        <strong>NERC ITCS:</strong> applies ~55% equalization across all connected regions based on NERC's 2023 Interregional Transfer Capability Study findings across 7 studied interfaces; Texas and Hawaii excluded.
+        <strong>NERC ITCS:</strong> uses NERC ITCS Table 7.7 as a counterfactual buildout and averages grid intensity across each directly connected interface neighborhood using an approximate TPR-to-eGRID crosswalk; Canada-linked interfaces use nearby low-carbon proxies. Hawaii remains unchanged.
         <br><br>
         All scenarios are static counterfactuals excluding transmission physics and induced renewables buildout.
         Facility locations from EPA TRI; solar may be undercounted due to TRI thresholds.
@@ -437,15 +437,112 @@ const ISLAND_GRIDS = new Set(["HIMS", "HIOA"]);
 // Isolated from Eastern/Western interconnections (ERCOT)
 const ERCOT_GRIDS = new Set(["ERCT"]);
 
-// NIET C corridor regions (DOE 2024 designations — PJM, MISO, SPP-N, WECC, NE, Southeast)
-const NIETC_REGIONS = new Set([
-  "NEWE","NYCW","NYUP","NYLI",
-  "RFCE","RFCM","RFCW",
-  "MROW","MROE",
-  "SPNO",
-  "CAMX","NWPP","AZNM","RMPA",
-  "SRVC","SRSO",
-]);
+// Coarse subregion neighbor graph used to proxy DOE's 2024 NIETC buildout.
+// This keeps Scenario 2 on the same "build the lines, then average directly
+// connected regions" logic as the ITCS scenario, but at the eGRID level.
+const NIETC_AVERAGE_NEIGHBORS = {
+  NEWE: ["NYCW", "NYLI", "NYUP", "RFCE"],
+  NYCW: ["NEWE", "NYLI", "NYUP", "RFCE"],
+  NYLI: ["NEWE", "NYCW", "NYUP", "RFCE"],
+  NYUP: ["NEWE", "NYCW", "NYLI", "RFCE"],
+  RFCE: ["NEWE", "NYCW", "NYLI", "NYUP", "RFCM", "RFCW", "SRVC"],
+  RFCM: ["RFCE", "RFCW", "MROE", "MROW"],
+  RFCW: ["RFCE", "RFCM", "MROE", "MROW", "SPNO", "SRVC", "SRSO"],
+  MROE: ["RFCM", "RFCW", "MROW", "SPNO"],
+  MROW: ["RFCM", "RFCW", "MROE", "SPNO"],
+  SPNO: ["MROE", "MROW", "RMPA"],
+  CAMX: ["AZNM", "RMPA", "NWPP"],
+  AZNM: ["CAMX", "RMPA"],
+  RMPA: ["AZNM", "CAMX", "NWPP", "SPNO"],
+  NWPP: ["CAMX", "RMPA"],
+  SRVC: ["RFCE", "RFCW", "SRSO"],
+  SRSO: ["RFCW", "SRVC"],
+};
+
+function buildNietcAverageRates(egridRates) {
+  const out = {};
+  for (const [code, neighbors] of Object.entries(NIETC_AVERAGE_NEIGHBORS)) {
+    const vals = [egridRates[code]?.co2_rate, ...neighbors.map(n => egridRates[n]?.co2_rate)].filter(v => Number.isFinite(v));
+    if (!vals.length) continue;
+    out[code] = vals.reduce((sum, v) => sum + v, 0) / vals.length;
+  }
+  return out;
+}
+
+// Approximate TPR -> eGRID crosswalk used to translate NERC ITCS Table 7.7
+// interfaces into this eGRID-based emissions model. Where NERC uses Canadian
+// TPRs (Quebec, Maritimes), we proxy them with the nearest lower-carbon
+// adjacent eGRID region so the scenario remains computable with local data.
+const ITCS_TPR_CODES = {
+  "California North": ["CAMX"],
+  "ERCOT": ["ERCT"],
+  "SPP-S": ["SPSO"],
+  "MISO-S": ["SRMV"],
+  "MISO-E": ["MROE"],
+  "MISO-W": ["MROW"],
+  "PJM-W": ["RFCW"],
+  "PJM-S": ["RFCM"],
+  "PJM-E": ["RFCE"],
+  "SERC-C": ["SRTV"],
+  "SERC-SE": ["SRSO"],
+  "SERC-E": ["SRVC"],
+  "SERC-Florida": ["FRCC"],
+  "New England": ["NEWE"],
+  "New York": ["NYCW", "NYLI", "NYUP"],
+  "Front Range": ["RMPA"],
+  "Wasatch Front": ["RMPA"],
+  "Québec": [],
+  "Maritimes": [],
+};
+
+const ITCS_AVERAGE_NEIGHBORS = {
+  "California North": ["Wasatch Front"],
+  "ERCOT": ["Front Range", "MISO-S", "SPP-S"],
+  "SPP-S": ["ERCOT", "Front Range", "MISO-W"],
+  "MISO-S": ["ERCOT", "SERC-SE"],
+  "MISO-E": ["MISO-W", "PJM-W"],
+  "MISO-W": ["MISO-E", "SPP-S"],
+  "PJM-W": ["MISO-E", "SERC-E"],
+  "PJM-S": ["PJM-E"],
+  "PJM-E": ["New York", "PJM-S"],
+  "SERC-C": ["SERC-E"],
+  "SERC-SE": ["MISO-S", "SERC-E", "SERC-Florida"],
+  "SERC-E": ["PJM-W", "SERC-C", "SERC-SE"],
+  "SERC-Florida": ["SERC-SE"],
+  "New England": ["Québec", "Maritimes"],
+  "New York": ["PJM-E", "Québec"],
+  "Front Range": ["ERCOT", "SPP-S"],
+  "Wasatch Front": ["California North"],
+};
+
+function buildItcsAverageRates(egridRates) {
+  const canadianProxy = {
+    "Québec": egridRates.NYUP?.co2_rate,
+    "Maritimes": egridRates.NEWE?.co2_rate,
+  };
+
+  function tprRate(tpr) {
+    if (tpr in canadianProxy) return canadianProxy[tpr];
+    const codes = ITCS_TPR_CODES[tpr] || [];
+    const totalGen = codes.reduce((sum, code) => sum + (egridRates[code]?.net_gen || 0), 0);
+    if (!totalGen) return null;
+    const totalWeighted = codes.reduce((sum, code) => {
+      const d = egridRates[code];
+      return sum + ((d?.co2_rate || 0) * (d?.net_gen || 0));
+    }, 0);
+    return totalWeighted / totalGen;
+  }
+
+  const out = {};
+  for (const [tpr, codes] of Object.entries(ITCS_TPR_CODES)) {
+    if (!codes.length) continue;
+    const vals = [tprRate(tpr), ...(ITCS_AVERAGE_NEIGHBORS[tpr] || []).map(tprRate)].filter(v => Number.isFinite(v));
+    if (!vals.length) continue;
+    const avg = vals.reduce((sum, v) => sum + v, 0) / vals.length;
+    for (const code of codes) out[code] = avg;
+  }
+  return out;
+}
 
 const SCENARIOS = {
   macrogrid: {
@@ -458,19 +555,18 @@ const SCENARIOS = {
   },
   nietc: {
     name: "NIETC Corridors",
-    desc: "Models DOE's 2024 National Interest Electric Transmission Corridor designations. Applies ~40% rate equalization for PJM, MISO, SPP-North, WECC, New England, and Southeast corridor regions. Texas and Hawaii excluded.",
+    desc: "Implements DOE's 2024 NIETC designations as a coarse eGRID-level buildout: corridor-linked regions are averaged with their directly connected NIETC neighbors, using the same post-build neighborhood-averaging logic as the ITCS scenario. Texas and Hawaii remain unchanged.",
+    buildRates: buildNietcAverageRates,
     getRate(code, rate, rNat) {
-      if (ISLAND_GRIDS.has(code) || ERCOT_GRIDS.has(code)) return rate;
-      if (NIETC_REGIONS.has(code)) return rate - 0.40 * (rate - rNat);
       return rate;
     },
   },
   itcs: {
     name: "NERC ITCS",
-    desc: "Based on NERC's 2023 Interregional Transfer Capability Study, which found ~55% of full macrogrid benefit is achievable through enhanced transfer capacity across 7 key interfaces. Texas and Hawaii excluded.",
+    desc: "Implements NERC ITCS Table 7.7 as if the recommended interregional lines were fully built and directly averaged connected regions' grid intensities across each new interface neighborhood. This is an eGRID-based proxy using an approximate TPR-to-subregion crosswalk; Canada-linked interfaces use nearby low-carbon proxies. Hawaii remains unchanged.",
+    buildRates: buildItcsAverageRates,
     getRate(code, rate, rNat) {
-      if (ISLAND_GRIDS.has(code) || ERCOT_GRIDS.has(code)) return rate;
-      return rate - 0.55 * (rate - rNat);
+      return rate;
     },
   },
 };
@@ -504,6 +600,7 @@ function reductionColor(delta, maxDelta) {
 
 function computeScenario(egridRates, mecsRows, scenarioKey) {
   const scenario = SCENARIOS[scenarioKey];
+  const scenarioRates = scenario.buildRates ? scenario.buildRates(egridRates) : null;
 
   const mecsMap = {};
   for (const row of mecsRows) {
@@ -537,7 +634,7 @@ function computeScenario(egridRates, mecsRows, scenarioKey) {
       if (elec_mkwh == null) continue;
       const share = censusNetGen[census] > 0 ? (d.net_gen || 0) / censusNetGen[census] : 0;
       const elec_MWh = elec_mkwh * 1_000_000 * share;
-      const R_eff = scenario.getRate(code, d.co2_rate, R_national);
+      const R_eff = scenarioRates?.[code] ?? scenario.getRate(code, d.co2_rate, R_national);
       const scope2_current  = elec_MWh * d.co2_rate / 2204.6;
       const scope2_scenario = elec_MWh * R_eff       / 2204.6;
       const delta = scope2_current - scope2_scenario;
