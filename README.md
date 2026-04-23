@@ -23,10 +23,10 @@ Install with: `pip install geopandas pandas openpyxl numpy`
 
 | File | Source | Notes |
 |------|--------|-------|
-| `data/raw/egrid2023_subregions/` | EPA eGRID 2023 Subregion Shapefiles | Boundary geometries for 26 subregions |
-| `data/raw/egrid2023_rates.csv` | EPA eGRID 2023 Summary Tables (Table 1) | Annual CO₂ output emission rates and net generation by subregion |
-| `data/raw/eGRID2023_Data.xlsx` | EPA eGRID 2023 Data File (Table 2) | Net generation used to compute subregion shares |
-| `data/raw/mecs_electricity.xlsx` | EIA MECS 2022, Table 7.6 | Electricity consumption by sector and Census region |
+| `data/raw/egrid2023_subregions/` | [EPA eGRID 2023 Subregion Shapefiles](https://www.epa.gov/egrid/detailed-data) | Boundary geometries for 26 subregions |
+| `data/raw/egrid2023_rates.csv` | [EPA eGRID 2023 Summary Tables (Table 1)](https://www.epa.gov/egrid/detailed-data) | Annual CO₂ output emission rates and net generation by subregion |
+| `data/raw/eGRID2023_Data.xlsx` | [EPA eGRID 2023 Data File (Table 2)](https://www.epa.gov/egrid/detailed-data) | Net generation used to compute subregion shares |
+| `data/raw/mecs_electricity.xlsx` | [EIA MECS 2022, Table 7.6](https://www.eia.gov/consumption/manufacturing/data/2022/) | Electricity consumption by sector and Census region |
 | `data/raw/tri_facilities.csv` | EPA TRI 2023 Facility-Level Data | Facility name, location, NAICS code |
 
 ---
@@ -49,7 +49,7 @@ Seven EITE manufacturing sectors are modeled, identified by NAICS code:
 
 ### Step 1 — Current Scope 2 emissions
 
-EIA MECS 2022 Table 7.6 reports electricity consumption (in million kWh) by sector and Census region (Northeast, Midwest, South, West). These four Census regions do not align with the 26 eGRID subregions, so consumption is disaggregated using each subregion's share of its Census region's total net generation:
+[EIA MECS 2022 Table 7.6](https://www.eia.gov/consumption/manufacturing/data/2022/) reports electricity consumption (in million kWh) by sector and Census region (Northeast, Midwest, South, West). These four Census regions do not align with the 26 [eGRID 2023](https://www.epa.gov/egrid/detailed-data) subregions, so consumption is disaggregated using each subregion's share of its Census region's total net generation:
 
 ```
 share(subregion) = net_gen(subregion) / Σ net_gen(subregions in same Census region)
@@ -95,7 +95,7 @@ This is a theoretical upper bound — it assumes perfectly frictionless interreg
 
 #### Scenario 2: NIETC Corridors (~40% equalization)
 
-Models the five National Interest Electric Transmission Corridors designated by the U.S. Department of Energy in 2024. These corridors are intended to facilitate interregional power transfer across specific interfaces. Corridor regions are assumed to close approximately 40% of the gap between their current rate and the national average; regions outside the corridors see no change. Texas (ERCT) and Hawaii are excluded.
+Models the five [National Interest Electric Transmission Corridors](https://www.energy.gov/oe/national-interest-electric-transmission-corridor-designation-process) designated by the U.S. Department of Energy in 2024. These corridors are intended to facilitate interregional power transfer across specific interfaces. Corridor regions are assumed to close approximately 40% of the gap between their current rate and the national average; regions outside the corridors see no change. Texas (ERCT) and Hawaii are excluded.
 
 Corridor regions: NEWE, NYCW, NYUP, NYLI, RFCE, RFCM, RFCW, MROW, MROE, SPNO, CAMX, NWPP, AZNM, RMPA, SRVC, SRSO.
 
@@ -108,7 +108,7 @@ The 40% factor is an approximation based on the scope and projected capacity of 
 
 #### Scenario 3: NERC ITCS (~55% equalization)
 
-Based on NERC's 2023 Interregional Transfer Capability Study (ITCS), which analyzed transfer capability across seven interregional interfaces and found substantial room for improvement. All subregions in the Eastern and Western interconnections are assumed to close 55% of the gap. Texas (ERCT) and Hawaii remain isolated.
+Based on NERC's [Interregional Transfer Capability Study (ITCS)](https://www.nerc.com/globalassets/initiatives/itcs/itcs_final_report.pdf), which analyzed transfer capability across seven interregional interfaces and found substantial room for improvement. All subregions in the Eastern and Western interconnections are assumed to close 55% of the gap. Texas (ERCT) and Hawaii remain isolated.
 
 ```
 R_effective = R_regional − 0.55 × (R_regional − R_national)   [all except ERCT, HIMS, HIOA]
