@@ -252,7 +252,7 @@
       <div class="stat-grid">
         <div class="stat-card wide">
           <div class="val" id="stat-natavg">—</div>
-          <div class="lbl">National avg emission rate (t CO₂/MWh)</div>
+          <div class="lbl">National avg emission rate (kg CO₂/MWh)</div>
         </div>
         <div class="stat-card">
           <div class="val" id="stat-facilities">—</div>
@@ -352,7 +352,7 @@
     <div class="section-body">
       <p id="footnote">
         Scope 2 estimates from EIA MECS 2022 Table 7.6 electricity consumption by sector and Census region,
-        distributed to eGRID 2023 subregions by net generation share. Emission rates converted from lb CO₂/MWh to t CO₂/MWh.
+        distributed to eGRID 2023 subregions by net generation share. Emission rates converted from lb CO₂/MWh to kg CO₂/MWh.
         <br><br>
         <strong>Full Macrogrid:</strong> all subregions equalize to the demand-weighted national average — theoretical maximum.
         <br>
@@ -645,13 +645,13 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     onEachFeature(feature, layer) {
       const code = feature.properties.Subregion;
       const d = egridRates[code] || {};
-      const rT = (d.co2_rate / 2204.6).toFixed(3);
+      const rT = (d.co2_rate / 2.2046).toFixed(1);
       const pct = d.co2_rate ? ((d.co2_rate - currentRNational) / currentRNational * 100).toFixed(1) : "—";
       const label = d.name && d.name !== code ? `${d.name} (${code})` : code;
       const reAbbr = SUBR_RE[code];
       const reLine = reAbbr ? `<span style="color:#666;font-size:10px;">${reAbbr} — ${NERC_RE[reAbbr]}</span><br>` : "";
       layer.bindTooltip(
-        `<strong>${label}</strong><br>${reLine}${rT} t CO₂/MWh &nbsp; ${pct > 0 ? "+" : ""}${pct}% vs avg`,
+        `<strong>${label}</strong><br>${reLine}${rT} kg CO₂/MWh &nbsp; ${pct > 0 ? "+" : ""}${pct}% vs avg`,
         { sticky: true }
       );
       layer.on("mouseover", () => { if (layer !== selectedLayer) layer.setStyle({ weight: 2, color: "#444" }); layer.bringToFront(); });
@@ -748,13 +748,13 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   legend.onAdd = () => {
     const div = L.DomUtil.create("div", "legend");
     const steps = 6;
-    let html = `<div class="legend-title">CO₂ Rate (t/MWh)</div>`;
+    let html = `<div class="legend-title">CO₂ Rate (kg/MWh)</div>`;
     for (let i = 0; i <= steps; i++) {
       const rate = minRate + (maxRate - minRate) * i / steps;
       const color = co2Color(rate, currentRNational, minRate, maxRate);
-      html += `<div class="legend-row"><span class="legend-swatch" style="background:${color}"></span>${(rate/2204.6).toFixed(3)}</div>`;
+      html += `<div class="legend-row"><span class="legend-swatch" style="background:${color}"></span>${(rate/2.2046).toFixed(0)}</div>`;
     }
-    html += `<div style="margin-top:5px;font-size:10px;color:#555;">◎ national avg: ${(currentRNational/2204.6).toFixed(3)}</div>`;
+    html += `<div style="margin-top:5px;font-size:10px;color:#555;">◎ national avg: ${(currentRNational/2.2046).toFixed(0)}</div>`;
     div.innerHTML = html;
     return div;
   };
@@ -822,7 +822,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   function showSubregionDetail(code) {
     selectedSubrCode = code;
     const d = egridRates[code] || {};
-    const rT = d.co2_rate ? (d.co2_rate / 2204.6).toFixed(4) : "—";
+    const rT = d.co2_rate ? (d.co2_rate / 2.2046).toFixed(1) : "—";
     const pct = d.co2_rate ? ((d.co2_rate - currentRNational) / currentRNational * 100) : null;
 
     document.getElementById("subr-name-text").textContent = d.name || code;
@@ -830,7 +830,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     const reAbbr = SUBR_RE[code];
     document.getElementById("subr-re-text").textContent =
       reAbbr ? `${reAbbr} — ${NERC_RE[reAbbr]}` : "";
-    document.getElementById("subr-rate-text").textContent = `${rT} t CO₂/MWh`;
+    document.getElementById("subr-rate-text").textContent = `${rT} kg CO₂/MWh`;
 
     const badge = document.getElementById("subr-pct-badge");
     if (pct !== null) {
@@ -911,7 +911,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     document.getElementById("scen-desc").textContent = SCENARIOS[key].desc;
 
     // Stats
-    document.getElementById("stat-natavg").textContent    = (R_national / 2204.6).toFixed(3);
+    document.getElementById("stat-natavg").textContent    = (R_national / 2.2046).toFixed(1);
     document.getElementById("stat-reduction").textContent =
       `${(totalDelta / 1e6).toFixed(1)} (${reductionPct.toFixed(1)}%)`;
 
