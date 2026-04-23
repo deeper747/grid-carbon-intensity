@@ -670,6 +670,7 @@ let _mecsRows         = [];
 
 let choroplethLayer = null;
 let macrogridLayer  = null;
+let stateBoundaryLayer = null;
 let sectorChart     = null;
 let subregionChart  = null;
 
@@ -677,17 +678,18 @@ let subregionChart  = null;
 
 Promise.all([
   fetch("data/processed/egrid_subregions.geojson").then(r => r.json()),
+  fetch("data/processed/state_boundaries.geojson").then(r => r.json()),
   fetch("data/processed/egrid_rates.json").then(r => r.json()),
   fetch("data/processed/mecs_electricity.json").then(r => r.json()),
   fetch("data/processed/tri_facilities.json").then(r => r.json()),
-]).then(([geojson, egridRates, mecsRows, triFacilities]) => {
-  init(geojson, egridRates, mecsRows, triFacilities);
+]).then(([geojson, stateGeojson, egridRates, mecsRows, triFacilities]) => {
+  init(geojson, stateGeojson, egridRates, mecsRows, triFacilities);
 }).catch(err => {
   document.body.innerHTML += `<div style="position:fixed;top:60px;left:0;right:0;padding:20px;color:red;font-weight:bold;background:#fff;">
     Error loading data: ${err.message}<br>Make sure you ran build.py and are serving from project root.</div>`;
 });
 
-function init(geojson, egridRates, mecsRows, triFacilities) {
+function init(geojson, stateGeojson, egridRates, mecsRows, triFacilities) {
   _egridRates = egridRates;
   _mecsRows   = mecsRows;
 
@@ -726,6 +728,10 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
   map.getPane("facilitiesPane").style.zIndex = 450;
   map.getPane("facilitiesPane").style.pointerEvents = "none";
   const facilityRenderer = L.canvas({ pane: "facilitiesPane" });
+
+  map.createPane("stateBordersPane");
+  map.getPane("stateBordersPane").style.zIndex = 430;
+  map.getPane("stateBordersPane").style.pointerEvents = "none";
 
   // ── Choropleth layer (static — shows current eGRID rates) ────────────────
   choroplethLayer = L.geoJSON(geojson, {
@@ -782,6 +788,19 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     },
   });
 
+  stateBoundaryLayer = L.geoJSON(stateGeojson, {
+    pane: "stateBordersPane",
+    interactive: false,
+    style() {
+      return {
+        color: "#2f4858",
+        weight: 1.2,
+        opacity: 0.55,
+        fill: false,
+      };
+    },
+  });
+
   // ── TRI facility markers ──────────────────────────────────────────────────
   const turfGeo = turf.featureCollection(
     geojson.features.map(f => turf.feature(f.geometry, { Subregion: f.properties.Subregion }))
@@ -827,6 +846,7 @@ function init(geojson, egridRates, mecsRows, triFacilities) {
     "Scenario Reduction Potential": macrogridLayer,
   };
   const overlays = {};
+  overlays["State Boundaries"] = stateBoundaryLayer;
   for (const sector of SECTORS) {
     overlays[`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${SECTOR_COLORS[sector]};margin-right:5px;vertical-align:middle;"></span>${sector}`] = sectorLayers[sector];
   }

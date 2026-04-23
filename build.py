@@ -51,6 +51,20 @@ def build_geojson():
     return len(gdf)
 
 
+def build_state_boundaries():
+    shp = RAW / "state_boundaries" / "tl_2023_us_state.shp"
+    gdf = gpd.read_file(shp)
+    if gdf.crs.to_epsg() != 4326:
+        gdf = gdf.to_crs(epsg=4326)
+    keep_cols = [c for c in ["NAME", "STUSPS", "geometry"] if c in gdf.columns]
+    gdf = gdf[keep_cols].copy()
+    gdf["geometry"] = gdf["geometry"].simplify(tolerance=0.01, preserve_topology=True)
+    out = OUT / "state_boundaries.geojson"
+    gdf.to_file(out, driver="GeoJSON")
+    print(f"[1a2] state boundaries: {len(gdf)} features → {out}")
+    return len(gdf)
+
+
 # ── 1b. eGRID emission rates + net generation ────────────────────────────────
 
 def build_egrid_rates():
@@ -270,12 +284,14 @@ def build_tri():
 if __name__ == "__main__":
     print("=== FPFA build.py ===\n")
     n_subregions = build_geojson()
+    n_states      = build_state_boundaries()
     wavg         = build_egrid_rates()
     mecs_rows    = build_mecs()
     facilities   = build_tri()
 
     print(f"\n=== Validation ===")
     print(f"  eGRID subregions:              {n_subregions}")
+    print(f"  State boundaries:              {n_states}")
     print(f"  TRI facilities (unique):       {len(facilities)}")
     print(f"  MECS rows (all):               {len(mecs_rows)}")
     print(f"  National avg CO₂ rate:         {wavg:.1f} lb/MWh")
