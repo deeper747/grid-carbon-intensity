@@ -437,22 +437,32 @@ const ERCOT_GRIDS = new Set(["ERCT"]);
 // This keeps Scenario 2 on the same "build the lines, then average directly
 // connected regions" logic as the ITCS scenario, but at the eGRID level.
 const NIETC_AVERAGE_NEIGHBORS = {
+  // New York–New England + New York–Mid-Atlantic corridors
   NEWE: ["NYCW", "NYLI", "NYUP", "RFCE"],
   NYCW: ["NEWE", "NYLI", "NYUP", "RFCE"],
   NYLI: ["NEWE", "NYCW", "NYUP", "RFCE"],
   NYUP: ["NEWE", "NYCW", "NYLI", "RFCE"],
+  // Mid-Atlantic corridor (PJM)
   RFCE: ["NEWE", "NYCW", "NYLI", "NYUP", "RFCM", "RFCW", "SRVC"],
   RFCM: ["RFCE", "RFCW", "MROE", "MROW"],
-  RFCW: ["RFCE", "RFCM", "MROE", "MROW", "SPNO", "SRVC", "SRSO"],
+  RFCW: ["RFCE", "RFCM", "MROE", "MROW", "SPNO", "SRMW", "SRVC", "SRSO"],
+  // Midwest-Plains corridor (PJM/MISO/SPP)
   MROE: ["RFCM", "RFCW", "MROW", "SPNO"],
-  MROW: ["RFCM", "RFCW", "MROE", "SPNO"],
-  SPNO: ["MROE", "MROW", "RMPA"],
+  MROW: ["RFCM", "RFCW", "MROE", "SPNO", "SRMW"],
+  SPNO: ["MROE", "MROW", "RMPA", "SPSO"],
+  SRMW: ["RFCW", "MROW", "SRMV", "SPSO"],
+  // Delta Plains corridor (SPP↔MISO, AR/OK)
+  SPSO: ["SPNO", "SRMW", "SRMV", "SRSO"],
+  SRMV: ["SPSO", "SRMW", "SRSO"],
+  // Mountain Northwest + Northern Plains corridors
+  NWPP: ["CAMX", "RMPA"],
+  RMPA: ["AZNM", "CAMX", "NWPP", "SPNO"],
+  // Mountain-Plains-Southwest + Plains Southwest corridors
   CAMX: ["AZNM", "RMPA", "NWPP"],
   AZNM: ["CAMX", "RMPA"],
-  RMPA: ["AZNM", "CAMX", "NWPP", "SPNO"],
-  NWPP: ["CAMX", "RMPA"],
+  // Mid-Atlantic southern reach
   SRVC: ["RFCE", "RFCW", "SRSO"],
-  SRSO: ["RFCW", "SRVC"],
+  SRSO: ["RFCW", "SRVC", "SPSO", "SRMV"],
 };
 
 function buildNietcAverageRates(egridRates) {
@@ -551,7 +561,7 @@ const SCENARIOS = {
   },
   nietc: {
     name: "NIETC Corridors",
-    desc: "Implements DOE's 2024 NIETC designations as a coarse eGRID-level buildout: corridor-linked regions are averaged with their directly connected NIETC neighbors, using the same post-build neighborhood-averaging logic as the ITCS scenario. Texas and Hawaii remain unchanged.",
+    desc: "Models all 10 potential NIETCs from DOE's 2023 national transmission needs study. Each corridor-linked subregion is averaged with its directly connected NIETC neighbors. Covers: NY–NE, NY–Mid-Atlantic, Mid-Atlantic, Midwest-Plains, Northern Plains, Delta Plains (SPSO↔SRMV), Mountain NW, Mountain-Plains-SW, Plains SW corridors. Texas (ERCT) and Hawaii remain unchanged.",
     buildRates: buildNietcAverageRates,
     getRate(code, rate, rNat) {
       return rate;

@@ -97,7 +97,7 @@ This is a theoretical upper bound — it assumes perfectly frictionless interreg
 
 Models the five [National Interest Electric Transmission Corridors](https://www.energy.gov/oe/national-interest-electric-transmission-corridor-designation-process) designated by the U.S. Department of Energy in 2024. These corridors are intended to facilitate interregional power transfer across specific interfaces. Corridor regions are assumed to close approximately 40% of the gap between their current rate and the national average; regions outside the corridors see no change. Texas (ERCT) and Hawaii are excluded.
 
-Corridor regions: NEWE, NYCW, NYUP, NYLI, RFCE, RFCM, RFCW, MROW, MROE, SPNO, CAMX, NWPP, AZNM, RMPA, SRVC, SRSO.
+Corridor regions (all 10 potential NIETCs): NEWE, NYCW, NYUP, NYLI, RFCE, RFCM, RFCW, MROW, MROE, SPNO, SRMW, SPSO, SRMV, NWPP, CAMX, AZNM, RMPA, SRVC, SRSO.
 
 ```
 R_effective = R_regional − 0.40 × (R_regional − R_national)   [corridor regions]
